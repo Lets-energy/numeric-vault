@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OrcaFácil — Sistema de Orçamentos Premium</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== TELA DE LOGIN ===== -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">Orca<span>Fácil</span></div>
+      <div class="login-sub">Sistema de Orçamentos</div>
+
+      <!-- ETAPA 1 -->
+      <div id="login-step1">
+        <div class="login-profile-btns">
+          <div class="profile-btn active" id="pb-admin" onclick="selectProfile('admin')">
+            <span class="icon">👑</span>Admin
+          </div>
+          <div class="profile-btn" id="pb-staff" onclick="selectProfile('staff')">
+            <span class="icon">🔧</span>Equipe
+          </div>
+          <div class="profile-btn" id="pb-visitor" onclick="selectProfile('visitor')">
+            <span class="icon">👤</span>Visitante
+          </div>
+        </div>
+        
+        <div id="login-fields-admin">
+          <label class="login-label">Usuário</label>
+          <input type="text" class="login-input" id="l-user" placeholder="Usuário" autocomplete="username">
+          <label class="login-label">Senha</label>
+          <input type="password" class="login-input" id="l-pass" placeholder="••••••" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        
+        <div id="login-fields-visitor" style="display:none;">
+          <label class="login-label">Seu nome (para o pedido)</label>
+          <input type="text" class="login-input" id="l-visitor-nome" placeholder="Ex: Maria Silva">
+          <label class="login-label">Telefone / WhatsApp</label>
+          <input type="text" class="login-input" id="l-visitor-tel" placeholder="(21) 99999-9999">
+        </div>
+        
+        <button class="login-btn" onclick="doLogin()">Entrar →</button>
+        <div class="login-err" id="login-err" style="color:var(--red); font-size:0.8rem; margin-top:10px; text-align:center; display:none;"></div>
+      </div>
+
+      <!-- ETAPA 2: 2FA -->
+      <div id="login-step2" style="display:none;">
+        <div style="text-align:center;margin-bottom:22px;">
+          <div style="font-size:2.5rem;margin-bottom:8px;">📱</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;">Verificação em 2 etapas</div>
+          <div style="color:var(--muted);font-size:.84rem;line-height:1.5;">Digite o código de 6 dígitos</div>
+        </div>
+        <label class="login-label">Código 2FA</label>
+        <input type="text" class="login-input" id="l-totp" placeholder="000 000" maxlength="6"
+          inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code"
+          style="font-size:1.4rem;letter-spacing:.25em;text-align:center;"
+          onkeydown="if(event.key==='Enter')verificar2FA()">
+        <button class="login-btn" onclick="verificar2FA()">Verificar ✓</button>
+        <div style="text-align:center;margin-top:14px;">
+          <button onclick="voltarLogin()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem;text-decoration:underline;">← Voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APP PRINCIPAL ===== -->
+  <div class="app" id="app-main" style="display:none;">
+    <header>
+      <div class="logo">Orca<span>Fácil</span></div>
+      <div class="tabs" id="main-tabs">
+        <button class="tab active" onclick="showTab('orcamento')">📋 Orçamento</button>
+        <button class="tab" id="tab-btn-pedidos" onclick="showTab('pedidos')" style="display:none;">📬 Pedidos <span id="pedidos-count"></span></button>
+        <button class="tab" id="tab-btn-catalogo" onclick="showTab('catalogo')" style="display:none;">📦 Catálogo</button>
+        <button class="tab" id="tab-btn-config" onclick="showTab('config')" style="display:none;">⚙️ Config</button>
+      </div>
+      <div class="user-badge">
+        <span id="header-user"></span>
+        <span class="role-tag" id="header-role"></span>
+        <button class="logout-btn" onclick="logout()">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- TAB ORÇAMENTO -->
+      <div id="tab-orcamento">
+        <div class="visitor-banner" id="visitor-banner" style="display:none;">
+          <strong>👤 Modo Visitante</strong> — Monte seu pedido e envie para aprovação.
+        </div>
+
+        <div class="card">
+          <div class="card-title">👤 <span id="dados-label">Dados do Cliente</span></div>
+          <div class="form-row">
+            <div><label>Nome</label><input type="text" id="cli-nome" placeholder="Ex: João da Silva"></div>
+            <div><label>Telefone</label><input type="tel" id="cli-tel" placeholder="(21) 99999-9999"></div>
+          </div>
+          <div class="form-row" id="row-end-validade">
+            <div><label>Endereço</label><input type="text" id="cli-end" placeholder="Rua, nº — Bairro"></div>
+            <div><label>Validade</label>
+              <select id="cli-validade"><option>7 dias</option><option selected>15 dias</option><option>30 dias</option></select>
+            </div>
+          </div>
+          <div class="form-row full">
+            <div><label id="obs-label">Observações</label>
+              <textarea id="cli-obs" rows="2" placeholder="Notas do orçamento..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🔍 <span id="add-label">Adicionar Itens</span></div>
+          <div class="search-box" style="position: relative;">
+            <input type="text" id="quick-search" placeholder="Busque por serviços ou materiais..." oninput="renderQuickSearch()" style="padding-left: 40px;">
+            <span style="position: absolute; left: 15px; top: 12px; color: var(--muted);">🔍</span>
+          </div>
+          <div id="quick-results" class="catalog-grid" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🧾 <span id="items-label">Itens Adicionados</span> <span class="badge" id="item-count" style="background:var(--accent); color:#000; padding:2px 8px; border-radius:10px; font-size:0.8rem; margin-left:10px;">0</span></div>
+          <div id="items-list"></div>
+
+          <div id="desconto-section" style="margin-top:20px; display:none;">
+             <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+               <input type="checkbox" id="desc-check" onchange="toggleDesconto()"> Aplicar Desconto
+             </label>
+             <div id="desc-form" style="display:none; margin-top:15px; background:var(--bg); padding:15px; border-radius:var(--radius-sm);">
+                <div class="form-row three">
+                  <div><label>Tipo</label><select id="desc-tipo" onchange="calcTotais()"><option value="percent">Porcentagem (%)</option><option value="valor">Valor Fixo (R$)</option></select></div>
+                  <div><label>Valor</label><input type="number" id="desc-valor" value="0" oninput="calcTotais()"></div>
+                  <div><label>Motivo</label><input type="text" id="desc-motivo" placeholder="Ex: Fidelidade"></div>
+                </div>
+             </div>
+          </div>
+
+          <div id="totals-box" style="display:none;">
+            <div class="total-box">
+              <div id="line-mat" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Material</span><span id="total-mat"></span></div>
+              <div id="line-mo" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Mão de Obra</span><span id="total-mo"></span></div>
+              <div id="total-subtotal-line" style="display:none; justify-content:space-between; margin-bottom:10px; color:var(--muted); border-top:1px solid var(--border); padding-top:10px;"><span>Subtotal</span><span id="total-subtotal"></span></div>
+              <div id="total-desc-line" style="display:none; justify-content:space-between; margin-bottom:10px; color:var(--green);"><span>Desconto</span><span id="total-desc-val"></span></div>
+              <div class="total-main" id="line-total" style="display:flex; justify-content:space-between;">
+                <span>TOTAL</span>
+                <span id="total-geral"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row" id="actions-row" style="display:none; margin-top:20px; gap:10px;">
+            <div id="actions-admin" style="display:flex; gap:10px; width:100%;">
+              <button class="btn btn-primary" onclick="verPreview()">👁 Visualizar</button>
+              <button class="btn btn-ghost" onclick="copiarWhatsApp()">📲 WhatsApp</button>
+              <button class="btn btn-red btn-sm" style="margin-left:auto;" onclick="limparOrcamento()">🗑 Limpar</button>
+            </div>
+            <div id="actions-visitor" style="display:none; width:100%;">
+              <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="enviarPedido()">📨 Enviar Pedido</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview Area -->
+        <div id="preview-card" style="display:none; margin-top:30px;">
+          <div class="card">
+            <div class="card-title">📄 Prévia do Documento</div>
+            <div id="preview-content" style="background:#fff; color:#000; padding:40px; border-radius:var(--radius-sm);"></div>
+            <div class="actions-row" style="margin-top:20px; gap:10px;">
+              <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / PDF</button>
+              <button class="btn btn-ghost" onclick="fecharPreview()">✕ Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB PEDIDOS -->
+      <div id="tab-pedidos" style="display:none;">
+        <div class="card">
+          <div class="card-title">📬 Pedidos Pendentes</div>
+          <div id="pedidos-list"></div>
+        </div>
+      </div>
+
+      <!-- TAB CATÁLOGO -->
+      <div id="tab-catalogo" style="display:none;">
+        <div class="card">
+          <div class="card-title">📦 Catálogo de Serviços</div>
+          <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="btn btn-primary btn-sm" onclick="abrirModalNovo()">＋ Novo Item</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportarCatalogo()">⬇ Exportar</button>
+            <label class="btn btn-ghost btn-sm">⬆ Importar<input type="file" style="display:none" onchange="importarCatalogo(event)"></label>
+          </div>
+          <div id="filter-tags" class="tabs" style="background:none; padding:0; margin-bottom:20px;"></div>
+          <div id="catalogo-list" class="catalog-grid"></div>
+        </div>
+      </div>
+
+      <!-- TAB CONFIG -->
+      <div id="tab-config" style="display:none;">
+        <div class="card">
+          <div class="card-title">⚙️ Configurações</div>
+          <div class="form-row">
+            <div><label>Nome da Empresa</label><input type="text" id="cfg-nome"></div>
+            <div><label>WhatsApp</label><input type="tel" id="cfg-wpp"></div>
+          </div>
+          <button class="btn btn-primary" onclick="salvarConfig()">💾 Salvar</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🔐 Segurança</div>
+          <div class="form-row">
+            <div><label>Senha Admin</label><input type="password" id="cfg-pass-admin"></div>
+            <div><label>Senha Equipe</label><input type="password" id="cfg-pass-staff"></div>
+          </div>
+          <button class="btn btn-ghost" onclick="salvarSenhas()">💾 Atualizar Senhas</button>
+          
+          <div style="margin-top:20px;">
+            <label>Autenticação 2FA</label>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-ghost btn-sm" onclick="setup2FA('admin')">👑 Config Admin</button>
+              <button class="btn btn-ghost btn-sm" onclick="setup2FA('staff')">🔧 Config Equipe</button>
+            </div>
+          </div>
+
+          <div id="qr-setup-box" style="display:none; margin-top:20px; background:var(--bg); padding:20px; border-radius:var(--radius-sm);">
+            <div id="totp-secret-display" style="font-family:monospace; margin-bottom:15px; color:var(--accent);"></div>
+            <input type="text" id="totp-confirm-code" placeholder="000000" maxlength="6" style="text-align:center; font-size:1.5rem; letter-spacing:5px;">
+            <div style="margin-top:15px; display:flex; gap:10px;">
+              <button class="btn btn-primary" onclick="confirmar2FA()">Ativar 2FA</button>
+              <button class="btn btn-ghost" onclick="cancelarSetup2FA()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Item -->
+  <div id="modal-item" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+    <div class="card" style="width:100%; max-width:500px; margin:20px;">
+      <div class="card-title" id="modal-title">Novo Item</div>
+      <div class="form-row full"><div><label>Nome</label><input type="text" id="mi-nome"></div></div>
+      <div class="form-row">
+        <div><label>Categoria</label><select id="mi-cat"><option>Elétrica</option><option>Automação</option><option>Marido de Aluguel</option></select></div>
+        <div><label>Unidade</label><input type="text" id="mi-unidade" placeholder="un, m, ponto..."></div>
+      </div>
+      <div class="form-row">
+        <div><label>Material (R$)</label><input type="number" id="mi-mat" oninput="previewTotal()"></div>
+        <div><label>Mão de Obra (R$)</label><input type="number" id="mi-mo" oninput="previewTotal()"></div>
+      </div>
+      <div style="margin-bottom:20px;">Total Unitário: <strong id="mi-total-preview" style="color:var(--accent);">R$ 0,00</strong></div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarItem()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Pedido -->
+  <div id="modal-pedido" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+    <div class="card" style="width:100%; max-width:600px; margin:20px;">
+      <div class="card-title">Detalhes do Pedido</div>
+      <div id="modal-pedido-content"></div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+        <button class="btn btn-ghost" onclick="document.getElementById('modal-pedido').style.display='none'">Fechar</button>
+        <button class="btn btn-primary" onclick="gerarOrcamentoDoPedido()">📋 Usar no Orçamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
