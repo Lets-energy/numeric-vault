@@ -1,0 +1,386 @@
+[
+  {
+    "id": 1,
+    "nome": "Tomada simples 2P+T (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 35,
+    "mo": 90
+  },
+  {
+    "id": 2,
+    "nome": "Tomada dupla 2P+T (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 48,
+    "mo": 100
+  },
+  {
+    "id": 3,
+    "nome": "Tomada USB dupla (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 70,
+    "mo": 100
+  },
+  {
+    "id": 4,
+    "nome": "Tomada 20A — ar-cond/chuveiro (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 55,
+    "mo": 110
+  },
+  {
+    "id": 5,
+    "nome": "Interruptor simples (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 28,
+    "mo": 80
+  },
+  {
+    "id": 6,
+    "nome": "Interruptor paralelo three-way (par, com material)",
+    "cat": "Elétrica",
+    "un": "par",
+    "mat": 60,
+    "mo": 130
+  },
+  {
+    "id": 7,
+    "nome": "Ponto de luz — plafonier/spot (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 40,
+    "mo": 110
+  },
+  {
+    "id": 8,
+    "nome": "Instalação de pendente / arandela (só MO)",
+    "cat": "Elétrica",
+    "un": "un",
+    "mat": 0,
+    "mo": 120
+  },
+  {
+    "id": 9,
+    "nome": "Instalação de ventilador de teto (só MO)",
+    "cat": "Elétrica",
+    "un": "un",
+    "mat": 0,
+    "mo": 180
+  },
+  {
+    "id": 10,
+    "nome": "Disjuntor simples até 40A (com material)",
+    "cat": "Elétrica",
+    "un": "un",
+    "mat": 45,
+    "mo": 80
+  },
+  {
+    "id": 11,
+    "nome": "Disjuntor bipolar/trifásico (com material)",
+    "cat": "Elétrica",
+    "un": "un",
+    "mat": 150,
+    "mo": 100
+  },
+  {
+    "id": 12,
+    "nome": "Quadro de distribuição até 12 circuitos",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 350,
+    "mo": 500
+  },
+  {
+    "id": 13,
+    "nome": "Aterramento (hastes + cabo)",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 250,
+    "mo": 350
+  },
+  {
+    "id": 14,
+    "nome": "Passagem de cabo por eletroduto",
+    "cat": "Elétrica",
+    "un": "m",
+    "mat": 8,
+    "mo": 22
+  },
+  {
+    "id": 15,
+    "nome": "Ponto elétrico para chuveiro (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 75,
+    "mo": 160
+  },
+  {
+    "id": 16,
+    "nome": "Instalação de chuveiro elétrico (só MO)",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 0,
+    "mo": 120
+  },
+  {
+    "id": 17,
+    "nome": "Instalação de split até 12000 BTU (só MO)",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 0,
+    "mo": 350
+  },
+  {
+    "id": 18,
+    "nome": "Instalação de split 18000–24000 BTU (só MO)",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 0,
+    "mo": 450
+  },
+  {
+    "id": 19,
+    "nome": "Troca de fiação — por ponto (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 50,
+    "mo": 150
+  },
+  {
+    "id": 20,
+    "nome": "Levantamento / laudo elétrico residencial",
+    "cat": "Elétrica",
+    "un": "vb",
+    "mat": 0,
+    "mo": 300
+  },
+  {
+    "id": 21,
+    "nome": "Ponto externo / quintal / garagem (com material)",
+    "cat": "Elétrica",
+    "un": "ponto",
+    "mat": 55,
+    "mo": 130
+  },
+  {
+    "id": 30,
+    "nome": "Ponto de rede Cat5e cabeado (até 15m)",
+    "cat": "Informática",
+    "un": "ponto",
+    "mat": 60,
+    "mo": 120
+  },
+  {
+    "id": 31,
+    "nome": "Ponto de rede Cat6 cabeado (até 15m)",
+    "cat": "Informática",
+    "un": "ponto",
+    "mat": 80,
+    "mo": 120
+  },
+  {
+    "id": 32,
+    "nome": "Passagem de cabo de rede",
+    "cat": "Informática",
+    "un": "m",
+    "mat": 6,
+    "mo": 16
+  },
+  {
+    "id": 33,
+    "nome": "Config de roteador / repetidor Wi-Fi",
+    "cat": "Informática",
+    "un": "vb",
+    "mat": 0,
+    "mo": 160
+  },
+  {
+    "id": 34,
+    "nome": "Instalação de switch gerenciável",
+    "cat": "Informática",
+    "un": "vb",
+    "mat": 0,
+    "mo": 200
+  },
+  {
+    "id": 35,
+    "nome": "Formatação e instalação Windows + drivers",
+    "cat": "Informática",
+    "un": "vb",
+    "mat": 0,
+    "mo": 200
+  },
+  {
+    "id": 36,
+    "nome": "Config e instalação de câmeras IP / DVR",
+    "cat": "Informática",
+    "un": "vb",
+    "mat": 0,
+    "mo": 280
+  },
+  {
+    "id": 37,
+    "nome": "Ponto de câmera externa (cabo + passagem)",
+    "cat": "Informática",
+    "un": "ponto",
+    "mat": 65,
+    "mo": 160
+  },
+  {
+    "id": 38,
+    "nome": "Diagnóstico e manutenção de PC / notebook",
+    "cat": "Informática",
+    "un": "vb",
+    "mat": 0,
+    "mo": 180
+  },
+  {
+    "id": 50,
+    "nome": "Smart switch 1 canal — instalação e config",
+    "cat": "Automação",
+    "un": "ponto",
+    "mat": 100,
+    "mo": 130
+  },
+  {
+    "id": 51,
+    "nome": "Smart switch 2 canais — instalação e config",
+    "cat": "Automação",
+    "un": "ponto",
+    "mat": 150,
+    "mo": 150
+  },
+  {
+    "id": 52,
+    "nome": "Dimmer inteligente — instalação e config",
+    "cat": "Automação",
+    "un": "ponto",
+    "mat": 170,
+    "mo": 140
+  },
+  {
+    "id": 53,
+    "nome": "Config Alexa — dispositivos e rotinas",
+    "cat": "Automação",
+    "un": "vb",
+    "mat": 0,
+    "mo": 200
+  },
+  {
+    "id": 54,
+    "nome": "Config Google Home / Assistente",
+    "cat": "Automação",
+    "un": "vb",
+    "mat": 0,
+    "mo": 200
+  },
+  {
+    "id": 55,
+    "nome": "Tomada inteligente / smart plug — instalação",
+    "cat": "Automação",
+    "un": "un",
+    "mat": 70,
+    "mo": 90
+  },
+  {
+    "id": 56,
+    "nome": "Sensor de presença inteligente — instalação",
+    "cat": "Automação",
+    "un": "un",
+    "mat": 0,
+    "mo": 110
+  },
+  {
+    "id": 57,
+    "nome": "Fechadura inteligente — instalação e config (só MO)",
+    "cat": "Automação",
+    "un": "vb",
+    "mat": 0,
+    "mo": 280
+  },
+  {
+    "id": 58,
+    "nome": "Campainha inteligente com vídeo (só MO)",
+    "cat": "Automação",
+    "un": "vb",
+    "mat": 0,
+    "mo": 200
+  },
+  {
+    "id": 59,
+    "nome": "Integração Home Assistant (config básica)",
+    "cat": "Automação",
+    "un": "vb",
+    "mat": 0,
+    "mo": 500
+  },
+  {
+    "id": 70,
+    "nome": "Montagem de móvel simples (estante, rack)",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 0,
+    "mo": 130
+  },
+  {
+    "id": 71,
+    "nome": "Montagem de cama box / casal",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 0,
+    "mo": 160
+  },
+  {
+    "id": 72,
+    "nome": "Fixação de TV na parede (com suporte)",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 40,
+    "mo": 160
+  },
+  {
+    "id": 73,
+    "nome": "Fixação de prateleiras (até 4)",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 25,
+    "mo": 110
+  },
+  {
+    "id": 74,
+    "nome": "Instalação de cortina / persiana (só MO)",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 0,
+    "mo": 120
+  },
+  {
+    "id": 75,
+    "nome": "Hora técnica — serviço geral",
+    "cat": "Marido de Aluguel",
+    "un": "hr",
+    "mat": 0,
+    "mo": 120
+  },
+  {
+    "id": 76,
+    "nome": "Visita técnica / avaliação",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 0,
+    "mo": 130
+  },
+  {
+    "id": 77,
+    "nome": "Pendurar quadros / espelhos pesados",
+    "cat": "Marido de Aluguel",
+    "un": "vb",
+    "mat": 0,
+    "mo": 90
+  }
+]

@@ -298,7 +298,7 @@ async function sha256(str) {
       </div>
       <div id="login-fields-admin">
         <label class="login-label">Usuário</label>
-        <input type="text" class="login-input" id="l-user" placeholder="lets" autocomplete="username">
+        <input type="text" class="login-input" id="l-user" placeholder="leticia" autocomplete="username">
         <label class="login-label">Senha</label>
         <input type="password" class="login-input" id="l-pass" placeholder="••••••" autocomplete="current-password"
           onkeydown="if(event.key==='Enter')doLogin()">
@@ -484,6 +484,7 @@ async function sha256(str) {
           <button class="btn btn-primary btn-sm" onclick="abrirModalNovo()">＋ Novo item</button>
           <button class="btn btn-ghost btn-sm" onclick="exportarCatalogo()">⬇ Exportar</button>
           <label class="btn btn-ghost btn-sm" style="cursor:pointer;">⬆ Importar<input type="file" accept=".json" style="display:none" onchange="importarCatalogo(event)"></label>
+          <button class="btn btn-ghost btn-sm" onclick="restaurarCatalogoPadrao()" title="Volta para os 48 itens originais (suas edições serão perdidas)" style="color:var(--muted);">↺ Restaurar padrão</button>
         </div>
         <div class="search-box"><input type="text" id="cat-search" placeholder="Buscar..." oninput="renderCatalogo()"></div>
         <div class="filter-tags" id="filter-tags"></div>
@@ -497,8 +498,8 @@ async function sha256(str) {
         <div class="card-title">🔐 Usuários e Senhas</div>
         <div class="security-note">⚠️ Este sistema usa proteção básica — adequado para uso interno. Não armazene dados financeiros sigilosos.</div>
         <div class="form-row">
-          <div><label>Usuário Admin (fixo: lets)</label>
-            <input type="text" value="lets" disabled style="opacity:.5;cursor:not-allowed;">
+          <div><label>Usuário Admin</label>
+            <input type="text" id="cfg-user-admin" placeholder="leticia">
           </div>
           <div><label>Senha Admin</label>
             <input type="password" id="cfg-pass-admin" placeholder="Nova senha (deixe vazio p/ manter)">
@@ -506,7 +507,7 @@ async function sha256(str) {
         </div>
         <div class="form-row">
           <div><label>Usuário Equipe</label>
-            <input type="text" id="cfg-user-staff" placeholder="Ex: nome do seu marido">
+            <input type="text" id="cfg-user-staff" placeholder="alex">
           </div>
           <div><label>Senha Equipe</label>
             <input type="password" id="cfg-pass-staff" placeholder="Nova senha">
@@ -647,6 +648,13 @@ async function sha256(str) {
 
 <script>
 // ============================================================
+// CATÁLOGO PADRÃO — embutido no HTML, disponível em qualquer dispositivo
+// Edições feitas no app ficam no localStorage (têm prioridade)
+// Use "Restaurar padrão" no Catálogo para voltar a estes valores
+// ============================================================
+const CATALOG_DEFAULT = [{"id": 1, "nome": "Tomada simples 2P+T (com material)", "cat": "Elétrica", "un": "ponto", "mat": 35, "mo": 90}, {"id": 2, "nome": "Tomada dupla 2P+T (com material)", "cat": "Elétrica", "un": "ponto", "mat": 48, "mo": 100}, {"id": 3, "nome": "Tomada USB dupla (com material)", "cat": "Elétrica", "un": "ponto", "mat": 70, "mo": 100}, {"id": 4, "nome": "Tomada 20A — ar-cond/chuveiro (com material)", "cat": "Elétrica", "un": "ponto", "mat": 55, "mo": 110}, {"id": 5, "nome": "Interruptor simples (com material)", "cat": "Elétrica", "un": "ponto", "mat": 28, "mo": 80}, {"id": 6, "nome": "Interruptor paralelo three-way (par, com material)", "cat": "Elétrica", "un": "par", "mat": 60, "mo": 130}, {"id": 7, "nome": "Ponto de luz — plafonier/spot (com material)", "cat": "Elétrica", "un": "ponto", "mat": 40, "mo": 110}, {"id": 8, "nome": "Instalação de pendente / arandela (só MO)", "cat": "Elétrica", "un": "un", "mat": 0, "mo": 120}, {"id": 9, "nome": "Instalação de ventilador de teto (só MO)", "cat": "Elétrica", "un": "un", "mat": 0, "mo": 180}, {"id": 10, "nome": "Disjuntor simples até 40A (com material)", "cat": "Elétrica", "un": "un", "mat": 45, "mo": 80}, {"id": 11, "nome": "Disjuntor bipolar/trifásico (com material)", "cat": "Elétrica", "un": "un", "mat": 150, "mo": 100}, {"id": 12, "nome": "Quadro de distribuição até 12 circuitos", "cat": "Elétrica", "un": "vb", "mat": 350, "mo": 500}, {"id": 13, "nome": "Aterramento (hastes + cabo)", "cat": "Elétrica", "un": "vb", "mat": 250, "mo": 350}, {"id": 14, "nome": "Passagem de cabo por eletroduto", "cat": "Elétrica", "un": "m", "mat": 8, "mo": 22}, {"id": 15, "nome": "Ponto elétrico para chuveiro (com material)", "cat": "Elétrica", "un": "ponto", "mat": 75, "mo": 160}, {"id": 16, "nome": "Instalação de chuveiro elétrico (só MO)", "cat": "Elétrica", "un": "vb", "mat": 0, "mo": 120}, {"id": 17, "nome": "Instalação de split até 12000 BTU (só MO)", "cat": "Elétrica", "un": "vb", "mat": 0, "mo": 350}, {"id": 18, "nome": "Instalação de split 18000–24000 BTU (só MO)", "cat": "Elétrica", "un": "vb", "mat": 0, "mo": 450}, {"id": 19, "nome": "Troca de fiação — por ponto (com material)", "cat": "Elétrica", "un": "ponto", "mat": 50, "mo": 150}, {"id": 20, "nome": "Levantamento / laudo elétrico residencial", "cat": "Elétrica", "un": "vb", "mat": 0, "mo": 300}, {"id": 21, "nome": "Ponto externo / quintal / garagem (com material)", "cat": "Elétrica", "un": "ponto", "mat": 55, "mo": 130}, {"id": 30, "nome": "Ponto de rede Cat5e cabeado (até 15m)", "cat": "Informática", "un": "ponto", "mat": 60, "mo": 120}, {"id": 31, "nome": "Ponto de rede Cat6 cabeado (até 15m)", "cat": "Informática", "un": "ponto", "mat": 80, "mo": 120}, {"id": 32, "nome": "Passagem de cabo de rede", "cat": "Informática", "un": "m", "mat": 6, "mo": 16}, {"id": 33, "nome": "Config de roteador / repetidor Wi-Fi", "cat": "Informática", "un": "vb", "mat": 0, "mo": 160}, {"id": 34, "nome": "Instalação de switch gerenciável", "cat": "Informática", "un": "vb", "mat": 0, "mo": 200}, {"id": 35, "nome": "Formatação e instalação Windows + drivers", "cat": "Informática", "un": "vb", "mat": 0, "mo": 200}, {"id": 36, "nome": "Config e instalação de câmeras IP / DVR", "cat": "Informática", "un": "vb", "mat": 0, "mo": 280}, {"id": 37, "nome": "Ponto de câmera externa (cabo + passagem)", "cat": "Informática", "un": "ponto", "mat": 65, "mo": 160}, {"id": 38, "nome": "Diagnóstico e manutenção de PC / notebook", "cat": "Informática", "un": "vb", "mat": 0, "mo": 180}, {"id": 50, "nome": "Smart switch 1 canal — instalação e config", "cat": "Automação", "un": "ponto", "mat": 100, "mo": 130}, {"id": 51, "nome": "Smart switch 2 canais — instalação e config", "cat": "Automação", "un": "ponto", "mat": 150, "mo": 150}, {"id": 52, "nome": "Dimmer inteligente — instalação e config", "cat": "Automação", "un": "ponto", "mat": 170, "mo": 140}, {"id": 53, "nome": "Config Alexa — dispositivos e rotinas", "cat": "Automação", "un": "vb", "mat": 0, "mo": 200}, {"id": 54, "nome": "Config Google Home / Assistente", "cat": "Automação", "un": "vb", "mat": 0, "mo": 200}, {"id": 55, "nome": "Tomada inteligente / smart plug — instalação", "cat": "Automação", "un": "un", "mat": 70, "mo": 90}, {"id": 56, "nome": "Sensor de presença inteligente — instalação", "cat": "Automação", "un": "un", "mat": 0, "mo": 110}, {"id": 57, "nome": "Fechadura inteligente — instalação e config (só MO)", "cat": "Automação", "un": "vb", "mat": 0, "mo": 280}, {"id": 58, "nome": "Campainha inteligente com vídeo (só MO)", "cat": "Automação", "un": "vb", "mat": 0, "mo": 200}, {"id": 59, "nome": "Integração Home Assistant (config básica)", "cat": "Automação", "un": "vb", "mat": 0, "mo": 500}, {"id": 70, "nome": "Montagem de móvel simples (estante, rack)", "cat": "Marido de Aluguel", "un": "vb", "mat": 0, "mo": 130}, {"id": 71, "nome": "Montagem de cama box / casal", "cat": "Marido de Aluguel", "un": "vb", "mat": 0, "mo": 160}, {"id": 72, "nome": "Fixação de TV na parede (com suporte)", "cat": "Marido de Aluguel", "un": "vb", "mat": 40, "mo": 160}, {"id": 73, "nome": "Fixação de prateleiras (até 4)", "cat": "Marido de Aluguel", "un": "vb", "mat": 25, "mo": 110}, {"id": 74, "nome": "Instalação de cortina / persiana (só MO)", "cat": "Marido de Aluguel", "un": "vb", "mat": 0, "mo": 120}, {"id": 75, "nome": "Hora técnica — serviço geral", "cat": "Marido de Aluguel", "un": "hr", "mat": 0, "mo": 120}, {"id": 76, "nome": "Visita técnica / avaliação", "cat": "Marido de Aluguel", "un": "vb", "mat": 0, "mo": 130}, {"id": 77, "nome": "Pendurar quadros / espelhos pesados", "cat": "Marido de Aluguel", "un": "vb", "mat": 0, "mo": 90}];
+
+// ============================================================
 // ESTADO
 // ============================================================
 let catalogo=[], orcamentoItems=[], editId=-1, filterCat='Todos', cfg={};
@@ -654,7 +662,7 @@ let logoBase64='', currentUser=null, currentRole=null;
 let selectedProfile='admin', pedidos=[], pedidoAtual=null, pedidoFilter='todos';
 let visitorNome='', visitorTel='', pendingRole=null, pendingUser=null;
 
-// Senhas padrão em SHA-256 ('Lets' e 'marido123')
+// Senhas padrão em SHA-256 ('Leticia' e 'alex123')
 // Esses hashes são gerados na primeira execução se não houver senha salva
 const DEFAULT_PASS = {
   admin: '5f2b6d3e8a1c4f9e0b7d2a6c8e1f4b9d2a5c8e1f4b9d2a5c8e1f4b9d2a5c8e1', // placeholder
@@ -665,17 +673,19 @@ const DEFAULT_PASS = {
 // INIT
 // ============================================================
 async function init(){
-  catalogo  = JSON.parse(localStorage.getItem('orca_cat')||'null') || defaultCatalogo();
+  // Prioridade: localStorage (edições do usuário) → CATALOG_DEFAULT (embutido no HTML)
+  const saved = localStorage.getItem('orca_cat');
+  catalogo = saved ? JSON.parse(saved) : CATALOG_DEFAULT.map(i=>({...i}));
   cfg       = JSON.parse(localStorage.getItem('orca_cfg')||'{}');
   logoBase64= localStorage.getItem('orca_logo')||'';
   pedidos   = JSON.parse(localStorage.getItem('orca_pedidos')||'[]');
 
   // Inicializar hashes padrão se nunca foram definidos
   if(!localStorage.getItem('orca_pass_admin')){
-    localStorage.setItem('orca_pass_admin', await sha256('Lets'));
+    localStorage.setItem('orca_pass_admin', await sha256('Leticia'));
   }
   if(!localStorage.getItem('orca_pass_staff')){
-    localStorage.setItem('orca_pass_staff', await sha256('marido123'));
+    localStorage.setItem('orca_pass_staff', await sha256('alex123'));
   }
 }
 
@@ -713,10 +723,11 @@ async function doLogin(){
 
   const admHash  = localStorage.getItem('orca_pass_admin');
   const stfHash  = localStorage.getItem('orca_pass_staff');
-  const staffUser= localStorage.getItem('orca_user_staff') || 'marido';
+  const staffUser= localStorage.getItem('orca_user_staff') || 'alex';
 
+  const adminUser=localStorage.getItem('orca_user_admin')||'leticia';
   let role = null;
-  if(selectedProfile==='admin' && user==='lets'    && hash===admHash) role='admin';
+  if(selectedProfile==='admin' && user===adminUser && hash===admHash) role='admin';
   if(selectedProfile==='staff' && user===staffUser && hash===stfHash) role='staff';
 
   if(!role){
@@ -730,7 +741,7 @@ async function doLogin(){
   if(totpSecret){
     // Ir para etapa 2
     pendingRole = role;
-    pendingUser = role==='admin' ? 'Lets' : (localStorage.getItem('orca_user_staff_display')||'Equipe');
+    pendingUser = role==='admin' ? (localStorage.getItem('orca_user_admin_display')||'Leticia') : (localStorage.getItem('orca_user_staff_display')||'Alex');
     document.getElementById('login-step1').style.display='none';
     document.getElementById('login-step2').style.display='block';
     document.getElementById('l-totp').value='';
@@ -738,7 +749,7 @@ async function doLogin(){
   } else {
     // Sem 2FA — entrar direto
     currentRole=role;
-    currentUser=role==='admin'?'Lets':(localStorage.getItem('orca_user_staff_display')||'Equipe');
+    currentUser=role==='admin'?(localStorage.getItem('orca_user_admin_display')||'Leticia'):(localStorage.getItem('orca_user_staff_display')||'Alex');
     iniciarApp();
   }
 }
@@ -1327,7 +1338,9 @@ function loadCfgUI(){
   const f={nome:'cfg-nome',tel:'cfg-tel',email:'cfg-email',doc:'cfg-doc',cidade:'cfg-cidade',footer:'cfg-footer',margem:'cfg-margem',wpp:'cfg-wpp'};
   Object.entries(f).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});
   const staffUserEl=document.getElementById('cfg-user-staff');
-  if(staffUserEl) staffUserEl.value=localStorage.getItem('orca_user_staff')||DEFAULT_CREDS.staff.user;
+  if(staffUserEl) staffUserEl.value=localStorage.getItem('orca_user_staff_display')||'alex';
+  const adminUserEl=document.getElementById('cfg-user-admin');
+  if(adminUserEl) adminUserEl.value=localStorage.getItem('orca_user_admin_display')||'leticia';
 }
 function salvarConfig(){
   cfg={nome:document.getElementById('cfg-nome').value,tel:document.getElementById('cfg-tel').value,
@@ -1338,10 +1351,13 @@ function salvarConfig(){
 async function salvarSenhas(){
   const pa=document.getElementById('cfg-pass-admin').value;
   const ps=document.getElementById('cfg-pass-staff').value;
+  const ua=document.getElementById('cfg-user-admin').value.trim().toLowerCase();
   const us=document.getElementById('cfg-user-staff').value.trim().toLowerCase();
   const disp=document.getElementById('cfg-user-staff').value.trim();
+  const dispA=document.getElementById('cfg-user-admin').value.trim();
   if(pa){ localStorage.setItem('orca_pass_admin', await sha256(pa)); }
   if(ps){ localStorage.setItem('orca_pass_staff', await sha256(ps)); }
+  if(ua){ localStorage.setItem('orca_user_admin', ua); localStorage.setItem('orca_user_admin_display', dispA); }
   if(us){ localStorage.setItem('orca_user_staff', us); localStorage.setItem('orca_user_staff_display', disp); }
   document.getElementById('cfg-pass-admin').value='';
   document.getElementById('cfg-pass-staff').value='';
@@ -1422,6 +1438,14 @@ function desativar2FA(role){
 // EXPORT / IMPORT
 // ============================================================
 function salvarCat(){localStorage.setItem('orca_cat',JSON.stringify(catalogo));}
+function restaurarCatalogoPadrao(){
+  if(!confirm('Restaurar os 48 itens originais? Suas edições e itens adicionados serão apagados.')) return;
+  catalogo = CATALOG_DEFAULT.map(i=>({...i}));
+  localStorage.removeItem('orca_cat');
+  renderCatalogo();
+  renderFilterTags();
+  toast('↺ Catálogo restaurado para o padrão ('+catalogo.length+' itens)');
+}
 function exportarCatalogo(){
   const b=new Blob([JSON.stringify(catalogo,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(b);
@@ -1436,55 +1460,7 @@ function importarCatalogo(e){
 // ============================================================
 // CATÁLOGO PADRÃO
 // ============================================================
-function defaultCatalogo(){return[
-  {id:1,nome:'Tomada simples 2P+T (com material)',cat:'Elétrica',un:'ponto',mat:35,mo:90},
-  {id:2,nome:'Tomada dupla 2P+T (com material)',cat:'Elétrica',un:'ponto',mat:48,mo:100},
-  {id:3,nome:'Tomada USB dupla (com material)',cat:'Elétrica',un:'ponto',mat:70,mo:100},
-  {id:4,nome:'Tomada 20A — ar-cond/chuveiro (com material)',cat:'Elétrica',un:'ponto',mat:55,mo:110},
-  {id:5,nome:'Interruptor simples (com material)',cat:'Elétrica',un:'ponto',mat:28,mo:80},
-  {id:6,nome:'Interruptor paralelo three-way (par, com material)',cat:'Elétrica',un:'par',mat:60,mo:130},
-  {id:7,nome:'Ponto de luz — plafonier/spot (com material)',cat:'Elétrica',un:'ponto',mat:40,mo:110},
-  {id:8,nome:'Instalação de pendente / arandela (só MO)',cat:'Elétrica',un:'un',mat:0,mo:120},
-  {id:9,nome:'Instalação de ventilador de teto (só MO)',cat:'Elétrica',un:'un',mat:0,mo:180},
-  {id:10,nome:'Disjuntor simples até 40A (com material)',cat:'Elétrica',un:'un',mat:45,mo:80},
-  {id:11,nome:'Disjuntor bipolar/trifásico (com material)',cat:'Elétrica',un:'un',mat:150,mo:100},
-  {id:12,nome:'Quadro de distribuição até 12 circuitos',cat:'Elétrica',un:'vb',mat:350,mo:500},
-  {id:13,nome:'Aterramento (hastes + cabo)',cat:'Elétrica',un:'vb',mat:250,mo:350},
-  {id:14,nome:'Passagem de cabo por eletroduto',cat:'Elétrica',un:'m',mat:8,mo:22},
-  {id:15,nome:'Ponto elétrico para chuveiro (com material)',cat:'Elétrica',un:'ponto',mat:75,mo:160},
-  {id:16,nome:'Instalação de chuveiro elétrico (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:120},
-  {id:17,nome:'Instalação de split até 12000 BTU (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:350},
-  {id:18,nome:'Instalação de split 18000–24000 BTU (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:450},
-  {id:19,nome:'Troca de fiação — por ponto (com material)',cat:'Elétrica',un:'ponto',mat:50,mo:150},
-  {id:20,nome:'Levantamento / laudo elétrico residencial',cat:'Elétrica',un:'vb',mat:0,mo:300},
-  {id:30,nome:'Ponto de rede Cat5e cabeado (até 15m)',cat:'Informática',un:'ponto',mat:60,mo:120},
-  {id:31,nome:'Ponto de rede Cat6 cabeado (até 15m)',cat:'Informática',un:'ponto',mat:80,mo:120},
-  {id:32,nome:'Passagem de cabo de rede',cat:'Informática',un:'m',mat:6,mo:16},
-  {id:33,nome:'Config de roteador / repetidor Wi-Fi',cat:'Informática',un:'vb',mat:0,mo:160},
-  {id:34,nome:'Instalação de switch gerenciável',cat:'Informática',un:'vb',mat:0,mo:200},
-  {id:35,nome:'Formatação e instalação Windows + drivers',cat:'Informática',un:'vb',mat:0,mo:200},
-  {id:36,nome:'Config e instalação de câmeras IP / DVR',cat:'Informática',un:'vb',mat:0,mo:280},
-  {id:37,nome:'Ponto de câmera externa (cabo + passagem)',cat:'Informática',un:'ponto',mat:65,mo:160},
-  {id:38,nome:'Diagnóstico e manutenção de PC / notebook',cat:'Informática',un:'vb',mat:0,mo:180},
-  {id:50,nome:'Smart switch 1 canal — instalação e config',cat:'Automação',un:'ponto',mat:100,mo:130},
-  {id:51,nome:'Smart switch 2 canais — instalação e config',cat:'Automação',un:'ponto',mat:150,mo:150},
-  {id:52,nome:'Dimmer inteligente — instalação e config',cat:'Automação',un:'ponto',mat:170,mo:140},
-  {id:53,nome:'Config Alexa — dispositivos e rotinas',cat:'Automação',un:'vb',mat:0,mo:200},
-  {id:54,nome:'Config Google Home / Assistente',cat:'Automação',un:'vb',mat:0,mo:200},
-  {id:55,nome:'Tomada inteligente / smart plug — instalação',cat:'Automação',un:'un',mat:70,mo:90},
-  {id:56,nome:'Sensor de presença inteligente — instalação',cat:'Automação',un:'un',mat:0,mo:110},
-  {id:57,nome:'Fechadura inteligente — instalação e config (só MO)',cat:'Automação',un:'vb',mat:0,mo:280},
-  {id:58,nome:'Campainha inteligente com vídeo (só MO)',cat:'Automação',un:'vb',mat:0,mo:200},
-  {id:59,nome:'Integração Home Assistant (config básica)',cat:'Automação',un:'vb',mat:0,mo:500},
-  {id:70,nome:'Montagem de móvel simples (estante, rack)',cat:'Marido de Aluguel',un:'vb',mat:0,mo:130},
-  {id:71,nome:'Montagem de cama box / casal',cat:'Marido de Aluguel',un:'vb',mat:0,mo:160},
-  {id:72,nome:'Fixação de TV na parede (com suporte)',cat:'Marido de Aluguel',un:'vb',mat:40,mo:160},
-  {id:73,nome:'Fixação de prateleiras (até 4)',cat:'Marido de Aluguel',un:'vb',mat:25,mo:110},
-  {id:74,nome:'Instalação de cortina / persiana (só MO)',cat:'Marido de Aluguel',un:'vb',mat:0,mo:120},
-  {id:75,nome:'Hora técnica — serviço geral',cat:'Marido de Aluguel',un:'hr',mat:0,mo:120},
-  {id:76,nome:'Visita técnica / avaliação',cat:'Marido de Aluguel',un:'vb',mat:0,mo:130},
-  {id:77,nome:'Pendurar quadros / espelhos pesados',cat:'Marido de Aluguel',un:'vb',mat:0,mo:90},
-];}
+function defaultCatalogo(){return CATALOG_DEFAULT.map(i=>({...i}));}
 
 // ============================================================
 // UTILS
