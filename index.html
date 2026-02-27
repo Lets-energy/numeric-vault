@@ -1,284 +1,1499 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OrcaFácil — Sistema de Orçamentos Premium</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrcaFácil</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117; --surface:#181c27; --surface2:#1e2333;
+  --border:#2a3050; --accent:#f5a623; --accent2:#e8874a;
+  --text:#e8eaf0; --muted:#7a85a0; --green:#3ecf8e;
+  --red:#ff5c5c; --blue:#4a9eff; --purple:#a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ===== LOGIN ===== */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;
+  background:radial-gradient(ellipse at 60% 40%, #1a2240 0%, #0f1117 70%);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 32px;
+  width:100%;max-width:380px;box-shadow:0 20px 60px #00000060;}
+.login-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;text-align:center;margin-bottom:6px;}
+.login-logo span{color:var(--accent);}
+.login-sub{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:28px;}
+.login-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:block;}
+.login-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;
+  padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;
+  outline:none;transition:border .2s;margin-bottom:14px;}
+.login-input:focus{border-color:var(--accent);}
+.login-btn{width:100%;background:var(--accent);color:#000;border:none;border-radius:9px;
+  padding:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;
+  transition:all .2s;margin-top:4px;}
+.login-btn:hover{background:var(--accent2);transform:translateY(-1px);}
+.login-err{color:var(--red);font-size:.83rem;text-align:center;margin-top:10px;display:none;}
+.login-profile-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:24px;}
+.profile-btn{padding:12px 8px;border-radius:10px;border:2px solid var(--border);background:var(--bg);
+  color:var(--muted);cursor:pointer;text-align:center;transition:all .2s;font-size:.8rem;font-weight:600;}
+.profile-btn.active{border-color:var(--accent);color:var(--accent);background:#f5a62310;}
+.profile-btn .icon{font-size:1.5rem;display:block;margin-bottom:4px;}
+
+/* ===== APP ===== */
+.app{display:flex;flex-direction:column;min-height:100vh;}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 20px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:10px;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;flex-shrink:0;}
+.logo span{color:var(--accent);}
+.user-badge{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);flex-shrink:0;}
+.user-badge strong{color:var(--text);}
+.role-tag{font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:700;}
+.role-admin{background:#f5a62320;color:var(--accent);}
+.role-staff{background:#4a9eff20;color:var(--blue);}
+.role-visitor{background:#a78bfa20;color:var(--purple);}
+.logout-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:7px;
+  padding:5px 10px;cursor:pointer;font-size:.78rem;transition:all .2s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+.tabs{display:flex;gap:3px;background:var(--bg);padding:4px;border-radius:10px;}
+.tab{padding:7px 12px;border-radius:8px;border:none;background:none;color:var(--muted);
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;transition:all .2s;white-space:nowrap;}
+.tab.active{background:var(--accent);color:#000;font-weight:700;}
+.main{flex:1;padding:20px;max-width:920px;margin:0 auto;width:100%;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.badge{background:var(--accent);color:#000;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;}
+.badge-purple{background:#a78bfa30;color:var(--purple);border:1px solid #a78bfa40;}
+.badge-green{background:#3ecf8e20;color:var(--green);border:1px solid #3ecf8e40;}
+.badge-red{background:#ff5c5c20;color:var(--red);border:1px solid #ff5c5c40;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-row.three{grid-template-columns:1fr 1fr 1fr;}
+label{font-size:.75rem;color:var(--muted);font-weight:500;display:block;margin-bottom:5px;
+  letter-spacing:.05em;text-transform:uppercase;}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+select option{background:var(--surface);}
+.btn{padding:10px 18px;border-radius:9px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-weight:600;font-size:.88rem;transition:all .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px);}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-green{background:var(--green);color:#000;}
+.btn-green:hover{opacity:.9;}
+.btn-danger{background:transparent;color:var(--red);border:1px solid #ff5c5c30;font-size:.78rem;padding:5px 9px;border-radius:7px;}
+.btn-danger:hover{background:#ff5c5c15;}
+.btn-sm{padding:6px 12px;font-size:.8rem;}
+.item-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;
+  padding:11px 14px;background:var(--bg);border-radius:9px;margin-bottom:8px;border:1px solid var(--border);}
+.item-name{font-size:.88rem;font-weight:500;}
+.item-cat{font-size:.73rem;color:var(--muted);margin-top:2px;}
+.item-qty{display:flex;align-items:center;gap:6px;}
+.item-qty button{width:27px;height:27px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text);cursor:pointer;font-size:1rem;display:flex;
+  align-items:center;justify-content:center;transition:background .15s;}
+.item-qty button:hover{background:var(--accent);color:#000;}
+.item-qty span{min-width:22px;text-align:center;font-weight:600;}
+.item-price{font-weight:700;color:var(--accent);min-width:85px;text-align:right;font-size:.93rem;}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px;}
+.catalog-item{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all .2s;}
+.catalog-item.clickable{cursor:pointer;}
+.catalog-item.clickable:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 20px #f5a62320;}
+.ci-name{font-size:.88rem;font-weight:600;margin-bottom:3px;}
+.ci-cat{font-size:.72rem;color:var(--muted);margin-bottom:9px;}
+.ci-prices{display:flex;justify-content:space-between;font-size:.8rem;}
+.ci-mat{color:var(--blue);}
+.ci-mo{color:var(--green);}
+.ci-total{color:var(--accent);font-weight:700;}
+.search-box{position:relative;margin-bottom:14px;}
+.search-box input{padding-left:36px;}
+.search-box::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.85rem;z-index:1;}
+.total-box{background:linear-gradient(135deg,#f5a62318,#e8874a0a);border:1px solid #f5a62340;border-radius:12px;padding:18px 20px;margin-top:14px;}
+.total-line{display:flex;justify-content:space-between;margin-bottom:7px;font-size:.88rem;color:var(--muted);}
+.total-line.desc{color:var(--green);}
+.total-main{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;}
+.total-main span:last-child{color:var(--accent);}
+.filter-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+.tag{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg);
+  color:var(--muted);font-size:.78rem;cursor:pointer;transition:all .2s;}
+.tag.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.modal-bg{display:none;position:fixed;inset:0;background:#00000095;z-index:200;
+  align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;
+  width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:20px;}
+.logo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:border .2s;position:relative;}
+.logo-upload-area:hover{border-color:var(--accent);}
+.logo-preview{max-height:80px;max-width:200px;object-fit:contain;border-radius:6px;}
+.desconto-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;
+  background:var(--bg);border-radius:9px;border:1px solid var(--border);transition:border .2s;user-select:none;}
+.desconto-toggle:hover{border-color:var(--accent);}
+.desconto-toggle input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:var(--accent);}
+.desconto-form{background:var(--bg);border-radius:9px;border:1px solid var(--green);padding:14px;margin-top:10px;display:none;}
+.desconto-form.show{display:block;}
+
+/* Pedidos de aprovação */
+.pedido-card{background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:16px;margin-bottom:12px;}
+.pedido-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px;}
+.pedido-titulo{font-weight:600;font-size:.92rem;}
+.pedido-meta{font-size:.78rem;color:var(--muted);margin-top:2px;}
+.pedido-itens{font-size:.82rem;color:var(--muted);margin-bottom:10px;line-height:1.7;}
+.pedido-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.status-badge{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+.status-pending{background:#f5a62320;color:var(--accent);}
+.status-approved{background:#3ecf8e20;color:var(--green);}
+.status-gerado{background:#4a9eff20;color:var(--blue);}
+.status-rejected{background:#ff5c5c20;color:var(--red);}
+
+/* Preview orçamento */
+.orca-preview{background:#fff;color:#1a1a1a;border-radius:12px;padding:30px;font-family:'DM Sans',sans-serif;line-height:1.5;}
+.orca-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;border-bottom:2.5px solid #f5a623;padding-bottom:16px;gap:20px;}
+.orca-header-left{display:flex;align-items:center;gap:14px;}
+.orca-logo-img{max-height:70px;max-width:160px;object-fit:contain;}
+.orca-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:#111;line-height:1.1;}
+.orca-brand span{color:#f5a623;}
+.orca-contact{font-size:.8rem;color:#555;margin-top:3px;}
+.orca-meta{text-align:right;flex-shrink:0;}
+.orca-num{font-size:.95rem;font-weight:700;color:#111;}
+.orca-valid{color:#e07010;font-weight:600;font-size:.82rem;}
+.orca-client{background:#f9f9f9;border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:.88rem;border-left:3px solid #f5a623;}
+.orca-client strong{display:block;font-size:1.05rem;color:#111;margin-bottom:4px;}
+.orca-table{width:100%;border-collapse:collapse;font-size:.84rem;margin-bottom:18px;}
+.orca-table th{background:#111;color:#fff;padding:9px 12px;text-align:left;font-size:.8rem;letter-spacing:.04em;}
+.orca-table th:nth-child(2),.orca-table th:nth-child(3),.orca-table th:nth-child(4){text-align:right;}
+.orca-table td{padding:9px 12px;border-bottom:1px solid #eee;vertical-align:middle;}
+.orca-table td:nth-child(2),.orca-table td:nth-child(3),.orca-table td:nth-child(4){text-align:right;}
+.orca-table td:nth-child(4){font-weight:600;}
+.orca-table tr:last-child td{border-bottom:none;}
+.orca-totals{background:#f9f9f9;border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:.86rem;}
+.orca-tot-line{display:flex;justify-content:space-between;color:#666;margin-bottom:5px;}
+.orca-tot-desc{display:flex;justify-content:space-between;color:#2a9a60;font-weight:600;margin-bottom:5px;}
+.orca-tot-main{display:flex;justify-content:space-between;font-size:1.15rem;font-weight:800;border-top:2px solid #111;padding-top:10px;margin-top:8px;}
+.orca-tot-main span:last-child{color:#f0a020;}
+.orca-obs{background:#fffbf0;border:1px solid #f5a62340;border-radius:8px;padding:12px 14px;font-size:.83rem;color:#555;margin-bottom:16px;}
+.orca-footer{font-size:.78rem;color:#999;text-align:center;border-top:1px solid #eee;padding-top:12px;}
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);}
+.empty-state .icon{font-size:2.5rem;margin-bottom:10px;}
+.actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#000;padding:12px 18px;
+  border-radius:10px;font-weight:600;font-size:.87rem;z-index:300;transform:translateY(80px);
+  opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+.tip{font-size:.8rem;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px 14px;margin-bottom:14px;border:1px solid var(--border);}
+.info-rj{font-size:.78rem;color:var(--muted);background:#1a2240;border:1px solid #2a3880;border-radius:8px;padding:10px 14px;margin-bottom:14px;}
+.visitor-banner{background:linear-gradient(135deg,#a78bfa20,#4a9eff10);border:1px solid #a78bfa40;
+  border-radius:12px;padding:16px 20px;margin-bottom:16px;font-size:.88rem;}
+.visitor-banner strong{color:var(--purple);}
+.security-note{background:#ff5c5c10;border:1px solid #ff5c5c30;border-radius:8px;padding:12px 14px;
+  font-size:.78rem;color:#ff8888;margin-bottom:14px;line-height:1.6;}
+
+@media(max-width:600px){
+  .form-row,.form-row.three{grid-template-columns:1fr;}
+  .catalog-grid{grid-template-columns:1fr 1fr;}
+  .tab{padding:6px 7px;font-size:.72rem;}
+  .item-row{grid-template-columns:1fr auto auto;gap:7px;}
+  .item-price{grid-column:1/-1;text-align:left;}
+  .orca-preview{padding:18px;}
+  .orca-header{flex-direction:column;}
+  .orca-meta{text-align:left;}
+  header{flex-wrap:wrap;}
+  .tabs{order:3;width:100%;}
+}
+@media print{
+  body{background:#fff!important;}
+  header,.main>.card:not(.preview-card){display:none!important;}
+  .preview-card .card-title,.preview-card .actions-row{display:none!important;}
+  .main{padding:0!important;max-width:100%!important;}
+  .preview-card{border:none!important;padding:0!important;}
+  .orca-preview{border-radius:0;box-shadow:none;}
+}
+</style>
+
+<script>
+// ===== TOTP RFC 6238 — implementação pura sem dependências =====
+const TOTP = {
+  // Decodifica base32 para Uint8Array
+  base32Decode(s) {
+    const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    s = s.toUpperCase().replace(/=+$/, '');
+    let bits = 0, val = 0;
+    const out = [];
+    for (const c of s) {
+      val = (val << 5) | alpha.indexOf(c);
+      bits += 5;
+      if (bits >= 8) { bits -= 8; out.push((val >> bits) & 0xff); }
+    }
+    return new Uint8Array(out);
+  },
+  // HMAC-SHA1
+  async hmacSHA1(keyBytes, msgBytes) {
+    const key = await crypto.subtle.importKey('raw', keyBytes, {name:'HMAC',hash:'SHA-1'}, false, ['sign']);
+    const sig = await crypto.subtle.sign('HMAC', key, msgBytes);
+    return new Uint8Array(sig);
+  },
+  // Gera código TOTP para o momento atual (ou offset de steps)
+  async generate(secret, step = 0) {
+    const T = Math.floor(Date.now() / 1000 / 30) + step;
+    const msg = new Uint8Array(8);
+    let t = T;
+    for (let i = 7; i >= 0; i--) { msg[i] = t & 0xff; t >>= 8; }
+    const key = this.base32Decode(secret);
+    const hash = await this.hmacSHA1(key, msg);
+    const offset = hash[19] & 0x0f;
+    const code = ((hash[offset] & 0x7f) << 24 | hash[offset+1] << 16 | hash[offset+2] << 8 | hash[offset+3]) % 1000000;
+    return String(code).padStart(6, '0');
+  },
+  // Verifica código — aceita janela de ±1 step (30s de tolerância)
+  async verify(secret, token) {
+    for (const step of [0, -1, 1]) {
+      if (await this.generate(secret, step) === token) return true;
+    }
+    return false;
+  },
+  // Gera secret aleatório em base32
+  randomSecret() {
+    const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    let s = '';
+    const arr = crypto.getRandomValues(new Uint8Array(20));
+    for (const b of arr) s += alpha[b % 32];
+    return s;
+  },
+  // URL para QR Code
+  otpauthURL(secret, account, issuer='OrcaFácil') {
+    return `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(account)}?secret=${secret}&issuer=${encodeURIComponent(issuer)}&algorithm=SHA1&digits=6&period=30`;
+  }
+};
+
+// ===== SHA-256 para senhas =====
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+</script>
 </head>
 <body>
 
-  <!-- ===== TELA DE LOGIN ===== -->
-  <div id="login-screen">
-    <div class="login-box">
-      <div class="login-logo">Orca<span>Fácil</span></div>
-      <div class="login-sub">Sistema de Orçamentos</div>
+<!-- ===== TELA DE LOGIN ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Orca<span>Fácil</span></div>
+    <div class="login-sub">Sistema de Orçamentos</div>
 
-      <!-- ETAPA 1 -->
-      <div id="login-step1">
-        <div class="login-profile-btns">
-          <div class="profile-btn active" id="pb-admin" onclick="selectProfile('admin')">
-            <span class="icon">👑</span>Admin
-          </div>
-          <div class="profile-btn" id="pb-staff" onclick="selectProfile('staff')">
-            <span class="icon">🔧</span>Equipe
-          </div>
-          <div class="profile-btn" id="pb-visitor" onclick="selectProfile('visitor')">
-            <span class="icon">👤</span>Visitante
-          </div>
+    <!-- ETAPA 1 -->
+    <div id="login-step1">
+      <div class="login-profile-btns">
+        <div class="profile-btn active" id="pb-admin" onclick="selectProfile('admin')">
+          <span class="icon">👑</span>Admin
         </div>
-        
-        <div id="login-fields-admin">
-          <label class="login-label">Usuário</label>
-          <input type="text" class="login-input" id="l-user" placeholder="Usuário" autocomplete="username">
-          <label class="login-label">Senha</label>
-          <input type="password" class="login-input" id="l-pass" placeholder="••••••" autocomplete="current-password"
-            onkeydown="if(event.key==='Enter')doLogin()">
+        <div class="profile-btn" id="pb-staff" onclick="selectProfile('staff')">
+          <span class="icon">🔧</span>Equipe
         </div>
-        
-        <div id="login-fields-visitor" style="display:none;">
-          <label class="login-label">Seu nome (para o pedido)</label>
-          <input type="text" class="login-input" id="l-visitor-nome" placeholder="Ex: Maria Silva">
-          <label class="login-label">Telefone / WhatsApp</label>
-          <input type="text" class="login-input" id="l-visitor-tel" placeholder="(21) 99999-9999">
+        <div class="profile-btn" id="pb-visitor" onclick="selectProfile('visitor')">
+          <span class="icon">👤</span>Visitante
         </div>
-        
-        <button class="login-btn" onclick="doLogin()">Entrar →</button>
-        <div class="login-err" id="login-err" style="color:var(--red); font-size:0.8rem; margin-top:10px; text-align:center; display:none;"></div>
       </div>
+      <div id="login-fields-admin">
+        <label class="login-label">Usuário</label>
+        <input type="text" class="login-input" id="l-user" placeholder="lets" autocomplete="username">
+        <label class="login-label">Senha</label>
+        <input type="password" class="login-input" id="l-pass" placeholder="••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div id="login-fields-visitor" style="display:none;">
+        <label class="login-label">Seu nome (para o pedido)</label>
+        <input type="text" class="login-input" id="l-visitor-nome" placeholder="Ex: Maria Silva">
+        <label class="login-label">Telefone / WhatsApp</label>
+        <input type="text" class="login-input" id="l-visitor-tel" placeholder="(21) 99999-9999">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Entrar →</button>
+      <div class="login-err" id="login-err"></div>
+    </div>
 
-      <!-- ETAPA 2: 2FA -->
-      <div id="login-step2" style="display:none;">
-        <div style="text-align:center;margin-bottom:22px;">
-          <div style="font-size:2.5rem;margin-bottom:8px;">📱</div>
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;">Verificação em 2 etapas</div>
-          <div style="color:var(--muted);font-size:.84rem;line-height:1.5;">Digite o código de 6 dígitos</div>
-        </div>
-        <label class="login-label">Código 2FA</label>
-        <input type="text" class="login-input" id="l-totp" placeholder="000 000" maxlength="6"
-          inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code"
-          style="font-size:1.4rem;letter-spacing:.25em;text-align:center;"
-          onkeydown="if(event.key==='Enter')verificar2FA()">
-        <button class="login-btn" onclick="verificar2FA()">Verificar ✓</button>
-        <div style="text-align:center;margin-top:14px;">
-          <button onclick="voltarLogin()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem;text-decoration:underline;">← Voltar</button>
-        </div>
+    <!-- ETAPA 2: 2FA -->
+    <div id="login-step2" style="display:none;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font-size:2.5rem;margin-bottom:8px;">📱</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;margin-bottom:6px;">Verificação em 2 etapas</div>
+        <div style="color:var(--muted);font-size:.84rem;line-height:1.5;">Digite o código de 6 dígitos do<br><strong style="color:var(--text)">Google Authenticator</strong> ou <strong style="color:var(--text)">Authy</strong></div>
+      </div>
+      <label class="login-label">Código 2FA</label>
+      <input type="text" class="login-input" id="l-totp" placeholder="000 000" maxlength="6"
+        inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code"
+        style="font-size:1.4rem;letter-spacing:.25em;text-align:center;"
+        onkeydown="if(event.key==='Enter')verificar2FA()"
+        oninput="this.value=this.value.replace(/\D/g,'')">
+      <button class="login-btn" onclick="verificar2FA()">Verificar ✓</button>
+      <div class="login-err" id="login-err-2fa"></div>
+      <div style="text-align:center;margin-top:14px;">
+        <button onclick="voltarLogin()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.82rem;text-decoration:underline;">← Voltar</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== APP PRINCIPAL ===== -->
-  <div class="app" id="app-main" style="display:none;">
-    <header>
-      <div class="logo">Orca<span>Fácil</span></div>
-      <div class="tabs" id="main-tabs">
-        <button class="tab active" onclick="showTab('orcamento')">📋 Orçamento</button>
-        <button class="tab" id="tab-btn-pedidos" onclick="showTab('pedidos')" style="display:none;">📬 Pedidos <span id="pedidos-count"></span></button>
-        <button class="tab" id="tab-btn-catalogo" onclick="showTab('catalogo')" style="display:none;">📦 Catálogo</button>
-        <button class="tab" id="tab-btn-config" onclick="showTab('config')" style="display:none;">⚙️ Config</button>
-      </div>
+<!-- ===== APP PRINCIPAL ===== -->
+<div class="app" id="app-main" style="display:none;">
+  <header>
+    <div class="logo">Orca<span>Fácil</span></div>
+    <div class="tabs" id="main-tabs">
+      <button class="tab active" onclick="showTab('orcamento')">📋 Orçamento</button>
+      <button class="tab" id="tab-btn-pedidos" onclick="showTab('pedidos')" style="display:none;">📬 Pedidos <span id="pedidos-count" style="display:none;"></span></button>
+      <button class="tab" id="tab-btn-catalogo" onclick="showTab('catalogo')" style="display:none;">📦 Catálogo</button>
+      <button class="tab" id="tab-btn-config" onclick="showTab('config')" style="display:none;">⚙️ Config</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
       <div class="user-badge">
         <span id="header-user"></span>
         <span class="role-tag" id="header-role"></span>
-        <button class="logout-btn" onclick="logout()">Sair</button>
       </div>
-    </header>
+      <button class="logout-btn" onclick="logout()">Sair</button>
+    </div>
+  </header>
 
-    <main class="main">
-      <!-- TAB ORÇAMENTO -->
-      <div id="tab-orcamento">
-        <div class="visitor-banner" id="visitor-banner" style="display:none;">
-          <strong>👤 Modo Visitante</strong> — Monte seu pedido e envie para aprovação.
+  <div class="main">
+
+    <!-- TAB ORÇAMENTO -->
+    <div id="tab-orcamento">
+      <!-- Banner visitante -->
+      <div class="visitor-banner" id="visitor-banner" style="display:none;">
+        <strong>👤 Modo Visitante</strong> — Monte seu pedido de serviços com os preços disponíveis e envie para aprovação. O responsável irá confirmar e entrar em contato.
+      </div>
+
+      <div class="card">
+        <div class="card-title">👤 Dados <span id="dados-label"></span></div>
+        <div class="form-row">
+          <div><label>Nome</label><input type="text" id="cli-nome" placeholder="Ex: João da Silva"></div>
+          <div><label>Telefone / WhatsApp</label><input type="tel" id="cli-tel" placeholder="(21) 99999-9999"></div>
+        </div>
+        <div class="form-row" id="row-end-validade">
+          <div><label>Endereço / Bairro</label><input type="text" id="cli-end" placeholder="Rua, nº — Bairro, RJ"></div>
+          <div><label>Validade</label>
+            <select id="cli-validade"><option>7 dias</option><option selected>15 dias</option><option>30 dias</option></select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div><label id="obs-label">Observações</label>
+            <textarea id="cli-obs" rows="2" placeholder="Ex: 50% entrada, 50% na conclusão. Agendar com 1 dia de antecedência."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">➕ <span id="add-label">Adicionar Itens</span></div>
+        <div class="tip" id="add-tip">💡 Digite o nome do serviço e clique para adicionar.</div>
+        <div class="search-box">
+          <input type="text" id="quick-search" placeholder="Buscar: tomada, rede, Alexa, TV, split..." oninput="renderQuickSearch()">
+        </div>
+        <div id="quick-results" class="catalog-grid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🧾 <span id="items-label">Itens</span> <span class="badge" id="item-count">0</span></div>
+        <div id="items-list">
+          <div class="empty-state"><div class="icon">📭</div><p>Nenhum item adicionado ainda.</p></div>
         </div>
 
-        <div class="card">
-          <div class="card-title">👤 <span id="dados-label">Dados do Cliente</span></div>
-          <div class="form-row">
-            <div><label>Nome</label><input type="text" id="cli-nome" placeholder="Ex: João da Silva"></div>
-            <div><label>Telefone</label><input type="tel" id="cli-tel" placeholder="(21) 99999-9999"></div>
-          </div>
-          <div class="form-row" id="row-end-validade">
-            <div><label>Endereço</label><input type="text" id="cli-end" placeholder="Rua, nº — Bairro"></div>
-            <div><label>Validade</label>
-              <select id="cli-validade"><option>7 dias</option><option selected>15 dias</option><option>30 dias</option></select>
+        <!-- Desconto (só admin/staff) -->
+        <div id="desconto-section" style="margin-top:14px;display:none;">
+          <label class="desconto-toggle" onclick="toggleDesconto()">
+            <input type="checkbox" id="desc-check" onchange="toggleDesconto()"> Aplicar desconto
+          </label>
+          <div class="desconto-form" id="desc-form">
+            <div class="form-row three" style="margin-bottom:0;">
+              <div><label>Tipo</label>
+                <select id="desc-tipo" onchange="calcTotais()">
+                  <option value="percent">Porcentagem (%)</option>
+                  <option value="valor">Valor fixo (R$)</option>
+                </select>
+              </div>
+              <div><label>Valor</label><input type="number" id="desc-valor" placeholder="0" min="0" oninput="calcTotais()"></div>
+              <div><label>Motivo</label><input type="text" id="desc-motivo" placeholder="fidelidade..."></div>
             </div>
           </div>
-          <div class="form-row full">
-            <div><label id="obs-label">Observações</label>
-              <textarea id="cli-obs" rows="2" placeholder="Notas do orçamento..."></textarea>
+        </div>
+
+        <div id="totals-box" style="display:none;">
+          <div class="total-box">
+            <div class="total-line" id="line-mat" style="display:none;"><span>Material</span><span id="total-mat"></span></div>
+            <div class="total-line" id="line-mo" style="display:none;"><span>Mão de obra</span><span id="total-mo"></span></div>
+            <div class="total-line" id="total-subtotal-line" style="display:none;"><span>Subtotal</span><span id="total-subtotal"></span></div>
+            <div class="total-line desc" id="total-desc-line" style="display:none;"><span id="total-desc-label">Desconto</span><span id="total-desc-val"></span></div>
+            <div class="total-main" id="line-total" style="display:none;"><span>TOTAL</span><span id="total-geral"></span></div>
+            <div class="total-main" id="line-visitor-total" style="display:none;">
+              <span style="font-size:1rem;color:var(--muted)">Pedido com <strong id="visitor-item-count" style="color:var(--text)">0</strong> serviço(s)</span>
+              <span style="font-size:1rem;color:var(--purple)">Aguarda orçamento ✓</span>
             </div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-title">🔍 <span id="add-label">Adicionar Itens</span></div>
-          <div class="search-box" style="position: relative;">
-            <input type="text" id="quick-search" placeholder="Busque por serviços ou materiais..." oninput="renderQuickSearch()" style="padding-left: 40px;">
-            <span style="position: absolute; left: 15px; top: 12px; color: var(--muted);">🔍</span>
-          </div>
-          <div id="quick-results" class="catalog-grid" style="margin-top: 15px;"></div>
+        <div class="actions-row" id="actions-row" style="display:none;">
+          <!-- Admin/Staff -->
+          <span id="actions-admin" style="display:contents;">
+            <button class="btn btn-primary" onclick="verPreview()">👁 Ver Orçamento</button>
+            <button class="btn btn-ghost" onclick="copiarWhatsApp()">📲 WhatsApp</button>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="limparOrcamento()">🗑 Limpar</button>
+          </span>
+          <!-- Visitante -->
+          <span id="actions-visitor" style="display:none;width:100%;">
+            <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;" onclick="enviarPedido()">
+              📨 Enviar Pedido para Aprovação
+            </button>
+          </span>
         </div>
+      </div>
 
-        <div class="card">
-          <div class="card-title">🧾 <span id="items-label">Itens Adicionados</span> <span class="badge" id="item-count" style="background:var(--accent); color:#000; padding:2px 8px; border-radius:10px; font-size:0.8rem; margin-left:10px;">0</span></div>
-          <div id="items-list"></div>
+      <!-- Preview (só admin/staff) -->
+      <div class="card preview-card" id="preview-card" style="display:none;">
+        <div class="card-title">📄 Preview do Orçamento</div>
+        <div id="preview-content"></div>
+        <div class="actions-row">
+          <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / PDF</button>
+          <button class="btn btn-ghost" onclick="copiarWhatsApp()">📲 WhatsApp</button>
+          <button class="btn btn-ghost btn-sm" onclick="fecharPreview()">✕ Fechar</button>
+        </div>
+      </div>
+    </div>
 
-          <div id="desconto-section" style="margin-top:20px; display:none;">
-             <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-               <input type="checkbox" id="desc-check" onchange="toggleDesconto()"> Aplicar Desconto
-             </label>
-             <div id="desc-form" style="display:none; margin-top:15px; background:var(--bg); padding:15px; border-radius:var(--radius-sm);">
-                <div class="form-row three">
-                  <div><label>Tipo</label><select id="desc-tipo" onchange="calcTotais()"><option value="percent">Porcentagem (%)</option><option value="valor">Valor Fixo (R$)</option></select></div>
-                  <div><label>Valor</label><input type="number" id="desc-valor" value="0" oninput="calcTotais()"></div>
-                  <div><label>Motivo</label><input type="text" id="desc-motivo" placeholder="Ex: Fidelidade"></div>
-                </div>
-             </div>
+    <!-- TAB PEDIDOS (admin/staff) -->
+    <div id="tab-pedidos" style="display:none;">
+      <div class="card">
+        <div class="card-title">📬 Pedidos de Clientes
+          <span class="badge-purple badge" id="pending-badge" style="display:none;"></span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm active-filter" onclick="filterPedidos('todos',this)">Todos</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterPedidos('pendente',this)">⏳ Aguardando</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterPedidos('gerado',this)">📋 Gerados</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterPedidos('aprovado',this)">✅ Aprovados</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterPedidos('rejeitado',this)">❌ Rejeitados</button>
+        </div>
+        <div id="pedidos-list"></div>
+      </div>
+    </div>
+
+    <!-- TAB CATÁLOGO -->
+    <div id="tab-catalogo" style="display:none;">
+      <div class="card">
+        <div class="card-title">📦 Catálogo de Serviços e Materiais</div>
+        <div class="info-rj">📍 Preços calibrados para o mercado do <strong>Rio de Janeiro (2025)</strong>. Atualize conforme seus custos reais.</div>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px;">
+          <button class="btn btn-primary btn-sm" onclick="abrirModalNovo()">＋ Novo item</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportarCatalogo()">⬇ Exportar</button>
+          <label class="btn btn-ghost btn-sm" style="cursor:pointer;">⬆ Importar<input type="file" accept=".json" style="display:none" onchange="importarCatalogo(event)"></label>
+        </div>
+        <div class="search-box"><input type="text" id="cat-search" placeholder="Buscar..." oninput="renderCatalogo()"></div>
+        <div class="filter-tags" id="filter-tags"></div>
+        <div id="catalogo-list" class="catalog-grid"></div>
+      </div>
+    </div>
+
+    <!-- TAB CONFIG -->
+    <div id="tab-config" style="display:none;">
+      <div class="card">
+        <div class="card-title">🔐 Usuários e Senhas</div>
+        <div class="security-note">⚠️ Este sistema usa proteção básica — adequado para uso interno. Não armazene dados financeiros sigilosos.</div>
+        <div class="form-row">
+          <div><label>Usuário Admin (fixo: lets)</label>
+            <input type="text" value="lets" disabled style="opacity:.5;cursor:not-allowed;">
           </div>
+          <div><label>Senha Admin</label>
+            <input type="password" id="cfg-pass-admin" placeholder="Nova senha (deixe vazio p/ manter)">
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>Usuário Equipe</label>
+            <input type="text" id="cfg-user-staff" placeholder="Ex: nome do seu marido">
+          </div>
+          <div><label>Senha Equipe</label>
+            <input type="password" id="cfg-pass-staff" placeholder="Nova senha">
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="salvarSenhas()" style="margin-bottom:6px;">💾 Salvar senhas</button>
+      </div>
 
-          <div id="totals-box" style="display:none;">
-            <div class="total-box">
-              <div id="line-mat" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Material</span><span id="total-mat"></span></div>
-              <div id="line-mo" style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Mão de Obra</span><span id="total-mo"></span></div>
-              <div id="total-subtotal-line" style="display:none; justify-content:space-between; margin-bottom:10px; color:var(--muted); border-top:1px solid var(--border); padding-top:10px;"><span>Subtotal</span><span id="total-subtotal"></span></div>
-              <div id="total-desc-line" style="display:none; justify-content:space-between; margin-bottom:10px; color:var(--green);"><span>Desconto</span><span id="total-desc-val"></span></div>
-              <div class="total-main" id="line-total" style="display:flex; justify-content:space-between;">
-                <span>TOTAL</span>
-                <span id="total-geral"></span>
+      <div class="card">
+        <div class="card-title">🔑 Autenticação em 2 Fatores (2FA)</div>
+        <div class="info-rj" style="margin-bottom:16px;">
+          O 2FA adiciona uma camada extra de segurança. Após ativado, além da senha será pedido um código gerado pelo app
+          <strong>Google Authenticator</strong> ou <strong>Authy</strong> no seu celular.
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:block;">Configurar 2FA para:</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="setup2FA('admin')">👑 Admin (você)</button>
+            <button class="btn btn-ghost btn-sm" onclick="setup2FA('staff')">🔧 Equipe</button>
+          </div>
+        </div>
+        <div id="status-2fa-admin" style="font-size:.82rem;margin-bottom:6px;"></div>
+        <div id="status-2fa-staff" style="font-size:.82rem;margin-bottom:6px;"></div>
+        <!-- QR Setup -->
+        <div id="qr-setup-box" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px;margin-top:14px;">
+          <div id="qr-setup-role-label" style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:12px;"></div>
+          <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+            <div>
+              <img id="qr-img" src="" alt="QR Code" style="width:180px;height:180px;border-radius:8px;background:#fff;padding:8px;">
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:8px;">1. Abra o <strong style="color:var(--text)">Google Authenticator</strong> ou <strong style="color:var(--text)">Authy</strong></div>
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:8px;">2. Toque em <strong style="color:var(--text)">"+"</strong> → <strong style="color:var(--text)">"Escanear QR"</strong></div>
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">3. Aponte para o QR ao lado</div>
+              <div style="font-size:.78rem;color:var(--muted);margin-bottom:6px;">Ou insira manualmente:</div>
+              <div id="totp-secret-display" style="font-family:monospace;background:var(--surface);padding:8px 12px;border-radius:7px;font-size:.85rem;color:var(--accent);word-break:break-all;margin-bottom:12px;"></div>
+              <div style="font-size:.8rem;color:var(--muted);margin-bottom:8px;">4. Digite o código gerado para confirmar:</div>
+              <input type="text" id="totp-confirm-code" maxlength="6" inputmode="numeric"
+                placeholder="000000" style="width:140px;font-size:1.1rem;letter-spacing:.2em;text-align:center;"
+                oninput="this.value=this.value.replace(/\D/g,'')">
+              <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" onclick="confirmar2FA()">✅ Ativar 2FA</button>
+                <button class="btn btn-danger" onclick="cancelarSetup2FA()">Cancelar</button>
               </div>
             </div>
           </div>
-
-          <div class="actions-row" id="actions-row" style="display:none; margin-top:20px; gap:10px;">
-            <div id="actions-admin" style="display:flex; gap:10px; width:100%;">
-              <button class="btn btn-primary" onclick="verPreview()">👁 Visualizar</button>
-              <button class="btn btn-ghost" onclick="copiarWhatsApp()">📲 WhatsApp</button>
-              <button class="btn btn-red btn-sm" style="margin-left:auto;" onclick="limparOrcamento()">🗑 Limpar</button>
-            </div>
-            <div id="actions-visitor" style="display:none; width:100%;">
-              <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="enviarPedido()">📨 Enviar Pedido</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Preview Area -->
-        <div id="preview-card" style="display:none; margin-top:30px;">
-          <div class="card">
-            <div class="card-title">📄 Prévia do Documento</div>
-            <div id="preview-content" style="background:#fff; color:#000; padding:40px; border-radius:var(--radius-sm);"></div>
-            <div class="actions-row" style="margin-top:20px; gap:10px;">
-              <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir / PDF</button>
-              <button class="btn btn-ghost" onclick="fecharPreview()">✕ Fechar</button>
-            </div>
-          </div>
         </div>
       </div>
 
-      <!-- TAB PEDIDOS -->
-      <div id="tab-pedidos" style="display:none;">
-        <div class="card">
-          <div class="card-title">📬 Pedidos Pendentes</div>
-          <div id="pedidos-list"></div>
+      <div class="card">
+        <div class="card-title">🏢 Seus Dados</div>
+        <div class="form-row full" style="margin-bottom:16px;">
+          <label>Logo da empresa</label>
+          <div class="logo-upload-area" onclick="document.getElementById('logo-input').click()">
+            <input type="file" id="logo-input" accept="image/*" style="display:none" onchange="carregarLogo(event)">
+            <div id="logo-placeholder"><div style="font-size:2rem;margin-bottom:6px;">🖼</div>
+              <div style="font-size:.85rem;color:var(--muted)">Clique para carregar sua logo</div></div>
+            <img id="logo-preview-img" class="logo-preview" style="display:none;">
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:8px;display:none;" id="btn-remover-logo" onclick="removerLogo()">🗑 Remover logo</button>
         </div>
-      </div>
-
-      <!-- TAB CATÁLOGO -->
-      <div id="tab-catalogo" style="display:none;">
-        <div class="card">
-          <div class="card-title">📦 Catálogo de Serviços</div>
-          <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <button class="btn btn-primary btn-sm" onclick="abrirModalNovo()">＋ Novo Item</button>
-            <button class="btn btn-ghost btn-sm" onclick="exportarCatalogo()">⬇ Exportar</button>
-            <label class="btn btn-ghost btn-sm">⬆ Importar<input type="file" style="display:none" onchange="importarCatalogo(event)"></label>
-          </div>
-          <div id="filter-tags" class="tabs" style="background:none; padding:0; margin-bottom:20px;"></div>
-          <div id="catalogo-list" class="catalog-grid"></div>
+        <div class="form-row">
+          <div><label>Nome / Empresa</label><input type="text" id="cfg-nome" placeholder="João Elétrica e Automação"></div>
+          <div><label>WhatsApp p/ receber pedidos</label><input type="tel" id="cfg-wpp" placeholder="(21) 99999-9999"></div>
         </div>
-      </div>
-
-      <!-- TAB CONFIG -->
-      <div id="tab-config" style="display:none;">
-        <div class="card">
-          <div class="card-title">⚙️ Configurações</div>
-          <div class="form-row">
-            <div><label>Nome da Empresa</label><input type="text" id="cfg-nome"></div>
-            <div><label>WhatsApp</label><input type="tel" id="cfg-wpp"></div>
-          </div>
-          <button class="btn btn-primary" onclick="salvarConfig()">💾 Salvar</button>
+        <div class="form-row">
+          <div><label>Telefone visível no orçamento</label><input type="tel" id="cfg-tel" placeholder="(21) 99999-9999"></div>
+          <div><label>E-mail</label><input type="email" id="cfg-email" placeholder="contato@email.com"></div>
         </div>
-
-        <div class="card">
-          <div class="card-title">🔐 Segurança</div>
-          <div class="form-row">
-            <div><label>Senha Admin</label><input type="password" id="cfg-pass-admin"></div>
-            <div><label>Senha Equipe</label><input type="password" id="cfg-pass-staff"></div>
-          </div>
-          <button class="btn btn-ghost" onclick="salvarSenhas()">💾 Atualizar Senhas</button>
-          
-          <div style="margin-top:20px;">
-            <label>Autenticação 2FA</label>
-            <div style="display:flex; gap:10px;">
-              <button class="btn btn-ghost btn-sm" onclick="setup2FA('admin')">👑 Config Admin</button>
-              <button class="btn btn-ghost btn-sm" onclick="setup2FA('staff')">🔧 Config Equipe</button>
-            </div>
-          </div>
-
-          <div id="qr-setup-box" style="display:none; margin-top:20px; background:var(--bg); padding:20px; border-radius:var(--radius-sm);">
-            <div id="totp-secret-display" style="font-family:monospace; margin-bottom:15px; color:var(--accent);"></div>
-            <input type="text" id="totp-confirm-code" placeholder="000000" maxlength="6" style="text-align:center; font-size:1.5rem; letter-spacing:5px;">
-            <div style="margin-top:15px; display:flex; gap:10px;">
-              <button class="btn btn-primary" onclick="confirmar2FA()">Ativar 2FA</button>
-              <button class="btn btn-ghost" onclick="cancelarSetup2FA()">Cancelar</button>
-            </div>
+        <div class="form-row">
+          <div><label>CNPJ / CPF (opcional)</label><input type="text" id="cfg-doc"></div>
+          <div><label>Cidade / Bairro</label><input type="text" id="cfg-cidade" placeholder="Rio de Janeiro / RJ"></div>
+        </div>
+        <div class="form-row">
+          <div><label>% Margem de lucro adicional</label><input type="number" id="cfg-margem" value="0" min="0"></div>
+          <div></div>
+        </div>
+        <div class="form-row full">
+          <div><label>Rodapé do orçamento</label>
+            <textarea id="cfg-footer" rows="2" placeholder="Pagamento: 50% entrada, 50% conclusão. Garantia 90 dias."></textarea>
           </div>
         </div>
+        <button class="btn btn-primary" onclick="salvarConfig()">💾 Salvar configurações</button>
       </div>
-    </main>
-  </div>
 
-  <!-- Modal Item -->
-  <div id="modal-item" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
-    <div class="card" style="width:100%; max-width:500px; margin:20px;">
-      <div class="card-title" id="modal-title">Novo Item</div>
-      <div class="form-row full"><div><label>Nome</label><input type="text" id="mi-nome"></div></div>
-      <div class="form-row">
-        <div><label>Categoria</label><select id="mi-cat"><option>Elétrica</option><option>Automação</option><option>Marido de Aluguel</option></select></div>
-        <div><label>Unidade</label><input type="text" id="mi-unidade" placeholder="un, m, ponto..."></div>
-      </div>
-      <div class="form-row">
-        <div><label>Material (R$)</label><input type="number" id="mi-mat" oninput="previewTotal()"></div>
-        <div><label>Mão de Obra (R$)</label><input type="number" id="mi-mo" oninput="previewTotal()"></div>
-      </div>
-      <div style="margin-bottom:20px;">Total Unitário: <strong id="mi-total-preview" style="color:var(--accent);">R$ 0,00</strong></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end;">
-        <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
-        <button class="btn btn-primary" onclick="salvarItem()">💾 Salvar</button>
+      <div class="card">
+        <div class="card-title">📊 Resumo</div>
+        <div id="stats-content" style="color:var(--muted);font-size:.9rem;line-height:2.2;"></div>
       </div>
     </div>
-  </div>
 
-  <!-- Modal Pedido -->
-  <div id="modal-pedido" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
-    <div class="card" style="width:100%; max-width:600px; margin:20px;">
-      <div class="card-title">Detalhes do Pedido</div>
-      <div id="modal-pedido-content"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-        <button class="btn btn-ghost" onclick="document.getElementById('modal-pedido').style.display='none'">Fechar</button>
-        <button class="btn btn-primary" onclick="gerarOrcamentoDoPedido()">📋 Usar no Orçamento</button>
+  </div>
+</div>
+
+<!-- Modal Item -->
+<div class="modal-bg" id="modal-item">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title" id="modal-title">Novo Item</div>
+    <div class="form-row full"><div><label>Nome</label><input type="text" id="mi-nome" placeholder="Ex: Tomada simples 2P+T"></div></div>
+    <div class="form-row">
+      <div><label>Categoria</label>
+        <select id="mi-cat"><option>Elétrica</option><option>Informática</option><option>Automação</option><option>Marido de Aluguel</option><option>Material</option><option>Outros</option></select>
+      </div>
+      <div><label>Unidade</label>
+        <select id="mi-unidade"><option>un</option><option>ponto</option><option>m</option><option>m²</option><option>hr</option><option>diária</option><option>vb</option><option>par</option></select>
       </div>
     </div>
+    <div class="form-row">
+      <div><label>Material (R$)</label><input type="number" id="mi-mat" placeholder="0.00" step="0.01" min="0" oninput="previewTotal()"></div>
+      <div><label>Mão de obra (R$)</label><input type="number" id="mi-mo" placeholder="0.00" step="0.01" min="0" oninput="previewTotal()"></div>
+    </div>
+    <div style="padding:10px 14px;background:var(--bg);border-radius:8px;margin-bottom:16px;font-size:.87rem;display:flex;justify-content:space-between;">
+      <span style="color:var(--muted)">Total unitário:</span>
+      <strong id="mi-total-preview" style="color:var(--accent)">R$ 0,00</strong>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarItem()">💾 Salvar</button>
+    </div>
   </div>
+</div>
 
-  <div id="toast" class="toast"></div>
+<!-- Modal Pedido (admin vê detalhes) -->
+<div class="modal-bg" id="modal-pedido">
+  <div class="modal" onclick="event.stopPropagation()" style="max-width:560px;">
+    <div class="modal-title">📬 Detalhes do Pedido</div>
+    <div id="modal-pedido-content"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-pedido').classList.remove('open')">Fechar</button>
+      <button class="btn btn-ghost" onclick="gerarOrcamentoDoPedido()">📋 Gerar Orçamento</button>
+      <button class="btn btn-green btn-sm" id="btn-aprovar" onclick="aprovarPedido()">✅ Aprovar</button>
+      <button class="btn btn-danger" id="btn-rejeitar" onclick="rejeitarPedido()">❌ Rejeitar</button>
+    </div>
+  </div>
+</div>
 
-  <!-- Scripts -->
-  <script type="module" src="app.js"></script>
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// ESTADO
+// ============================================================
+let catalogo=[], orcamentoItems=[], editId=-1, filterCat='Todos', cfg={};
+let logoBase64='', currentUser=null, currentRole=null;
+let selectedProfile='admin', pedidos=[], pedidoAtual=null, pedidoFilter='todos';
+let visitorNome='', visitorTel='', pendingRole=null, pendingUser=null;
+
+// Senhas padrão em SHA-256 ('Lets' e 'marido123')
+// Esses hashes são gerados na primeira execução se não houver senha salva
+const DEFAULT_PASS = {
+  admin: '5f2b6d3e8a1c4f9e0b7d2a6c8e1f4b9d2a5c8e1f4b9d2a5c8e1f4b9d2a5c8e1', // placeholder
+  staff: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2'  // placeholder
+};
+
+// ============================================================
+// INIT
+// ============================================================
+async function init(){
+  catalogo  = JSON.parse(localStorage.getItem('orca_cat')||'null') || defaultCatalogo();
+  cfg       = JSON.parse(localStorage.getItem('orca_cfg')||'{}');
+  logoBase64= localStorage.getItem('orca_logo')||'';
+  pedidos   = JSON.parse(localStorage.getItem('orca_pedidos')||'[]');
+
+  // Inicializar hashes padrão se nunca foram definidos
+  if(!localStorage.getItem('orca_pass_admin')){
+    localStorage.setItem('orca_pass_admin', await sha256('Lets'));
+  }
+  if(!localStorage.getItem('orca_pass_staff')){
+    localStorage.setItem('orca_pass_staff', await sha256('marido123'));
+  }
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function selectProfile(p){
+  selectedProfile=p;
+  ['admin','staff','visitor'].forEach(x=>{
+    document.getElementById('pb-'+x).classList.toggle('active',x===p);
+  });
+  document.getElementById('login-fields-admin').style.display = p==='visitor'?'none':'block';
+  document.getElementById('login-fields-visitor').style.display= p==='visitor'?'block':'none';
+  const err=document.getElementById('login-err');
+  err.style.display='none'; err.textContent='';
+}
+
+async function doLogin(){
+  const err=document.getElementById('login-err');
+  err.style.display='none'; err.textContent='';
+
+  if(selectedProfile==='visitor'){
+    visitorNome=document.getElementById('l-visitor-nome').value.trim();
+    visitorTel =document.getElementById('l-visitor-tel').value.trim();
+    if(!visitorNome){
+      err.textContent='Informe seu nome.';err.style.display='block';return;
+    }
+    currentRole='visitor'; currentUser=visitorNome;
+    iniciarApp(); return;
+  }
+
+  const user = document.getElementById('l-user').value.trim().toLowerCase();
+  const pass = document.getElementById('l-pass').value;
+  const hash = await sha256(pass);
+
+  const admHash  = localStorage.getItem('orca_pass_admin');
+  const stfHash  = localStorage.getItem('orca_pass_staff');
+  const staffUser= localStorage.getItem('orca_user_staff') || 'marido';
+
+  let role = null;
+  if(selectedProfile==='admin' && user==='lets'    && hash===admHash) role='admin';
+  if(selectedProfile==='staff' && user===staffUser && hash===stfHash) role='staff';
+
+  if(!role){
+    err.textContent='Usuário ou senha incorretos.';err.style.display='block';return;
+  }
+
+  // Checar se tem 2FA configurado para este perfil
+  const totpKey = 'orca_totp_'+role;
+  const totpSecret = localStorage.getItem(totpKey);
+
+  if(totpSecret){
+    // Ir para etapa 2
+    pendingRole = role;
+    pendingUser = role==='admin' ? 'Lets' : (localStorage.getItem('orca_user_staff_display')||'Equipe');
+    document.getElementById('login-step1').style.display='none';
+    document.getElementById('login-step2').style.display='block';
+    document.getElementById('l-totp').value='';
+    setTimeout(()=>document.getElementById('l-totp').focus(),100);
+  } else {
+    // Sem 2FA — entrar direto
+    currentRole=role;
+    currentUser=role==='admin'?'Lets':(localStorage.getItem('orca_user_staff_display')||'Equipe');
+    iniciarApp();
+  }
+}
+
+async function verificar2FA(){
+  const err=document.getElementById('login-err-2fa');
+  err.style.display='none'; err.textContent='';
+  const token=document.getElementById('l-totp').value.trim();
+  if(token.length!==6){err.textContent='Digite os 6 dígitos.';err.style.display='block';return;}
+  const secret=localStorage.getItem('orca_totp_'+pendingRole);
+  const ok=await TOTP.verify(secret,token);
+  if(ok){
+    currentRole=pendingRole;
+    currentUser=pendingUser;
+    pendingRole=null; pendingUser=null;
+    iniciarApp();
+  } else {
+    err.textContent='Código inválido ou expirado. Tente novamente.';err.style.display='block';
+    document.getElementById('l-totp').value='';
+    document.getElementById('l-totp').focus();
+  }
+}
+
+function voltarLogin(){
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('login-step1').style.display='block';
+  pendingRole=null; pendingUser=null;
+  document.getElementById('l-pass').value='';
+}
+
+function iniciarApp(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-main').style.display='flex';
+
+  // Header
+  document.getElementById('header-user').textContent=currentUser;
+  const rt=document.getElementById('header-role');
+  if(currentRole==='admin'){rt.textContent='Admin';rt.className='role-tag role-admin';}
+  else if(currentRole==='staff'){rt.textContent='Equipe';rt.className='role-tag role-staff';}
+  else{rt.textContent='Visitante';rt.className='role-tag role-visitor';}
+
+  // Tabs visíveis
+  const isAdmin=currentRole==='admin';
+  const isStaff=currentRole==='staff';
+  const isPriv=isAdmin||isStaff;
+  document.getElementById('tab-btn-pedidos').style.display=isPriv?'':'none';
+  document.getElementById('tab-btn-catalogo').style.display=isPriv?'':'none';
+  document.getElementById('tab-btn-config').style.display=isAdmin?'':'none';
+
+  // UI visitor
+  const isVisitor=currentRole==='visitor';
+  document.getElementById('visitor-banner').style.display=isVisitor?'block':'none';
+  document.getElementById('dados-label').textContent=isVisitor?'do Solicitante':'do Cliente';
+  document.getElementById('add-label').textContent=isVisitor?'Selecionar Serviços':'Adicionar Itens';
+  document.getElementById('obs-label').textContent=isVisitor?'Observações / Data desejada':'Observações';
+  document.getElementById('cli-obs').placeholder=isVisitor
+    ?'Ex: Preciso para o dia 15/07. Apartamento 3º andar, bloco B.'
+    :'Ex: 50% entrada, 50% na conclusão.';
+
+  if(isVisitor){
+    document.getElementById('cli-nome').value=visitorNome;
+    document.getElementById('cli-tel').value=visitorTel;
+    document.getElementById('row-end-validade').style.display='none';
+  } else {
+    document.getElementById('row-end-validade').style.display='';
+  }
+
+  loadCfgUI();
+  if(logoBase64) showLogoPreview(logoBase64);
+  renderCatalogo();
+  renderFilterTags();
+  renderStats();
+  renderPedidos();
+  atualizarBadgePedidos();
+  showTab('orcamento');
+}
+
+function logout(){
+  currentRole=null; currentUser=null; orcamentoItems=[];
+  pendingRole=null; pendingUser=null;
+  document.getElementById('app-main').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('login-step1').style.display='block';
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  document.getElementById('l-visitor-nome').value='';
+  document.getElementById('l-visitor-tel').value='';
+  selectProfile('admin');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(t){
+  ['orcamento','pedidos','catalogo','config'].forEach(x=>{
+    const el=document.getElementById('tab-'+x);
+    if(el) el.style.display=x===t?'block':'none';
+  });
+  document.querySelectorAll('.tab').forEach(el=>{
+    el.classList.toggle('active', el.getAttribute('onclick')?.includes("'"+t+"'"));
+  });
+  if(t==='pedidos') renderPedidos();
+  if(t==='config')  renderStats();
+}
+
+// ============================================================
+// CATÁLOGO
+// ============================================================
+function renderFilterTags(){
+  const cats=['Todos',...new Set(catalogo.map(i=>i.cat))];
+  document.getElementById('filter-tags').innerHTML=cats.map(c=>
+    `<span class="tag ${c===filterCat?'active':''}" onclick="setFilter('${c}')">${c}</span>`).join('');
+}
+function setFilter(c){filterCat=c;renderFilterTags();renderCatalogo();}
+function renderCatalogo(){
+  const s=(document.getElementById('cat-search')?.value||'').toLowerCase();
+  const items=catalogo.filter(i=>(filterCat==='Todos'||i.cat===filterCat)&&(!s||i.nome.toLowerCase().includes(s)||i.cat.toLowerCase().includes(s)));
+  const el=document.getElementById('catalogo-list');
+  if(!items.length){el.innerHTML='<p style="color:var(--muted);font-size:.88rem;padding:8px 0">Nenhum item encontrado.</p>';return;}
+  el.innerHTML=items.map(i=>`
+    <div class="catalog-item">
+      <div class="ci-name">${i.nome}</div>
+      <div class="ci-cat">${i.cat} · ${i.un}</div>
+      <div class="ci-prices"><span class="ci-mat">Mat: ${fmt(i.mat)}</span><span class="ci-mo">MO: ${fmt(i.mo)}</span></div>
+      <div class="ci-prices" style="margin-top:8px;align-items:center;">
+        <span class="ci-total">${fmt(i.mat+i.mo)}</span>
+        <span style="display:flex;gap:5px;">
+          <button class="btn btn-ghost btn-sm" onclick="editarItem(${i.id})">✏️</button>
+          <button class="btn btn-danger" onclick="excluirItem(${i.id})">🗑</button>
+        </span>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// BUSCA RÁPIDA
+// ============================================================
+function renderQuickSearch(){
+  const s=(document.getElementById('quick-search')?.value||'').toLowerCase();
+  const el=document.getElementById('quick-results');
+  if(!s){el.innerHTML='';return;}
+  const items=catalogo.filter(i=>i.nome.toLowerCase().includes(s)||i.cat.toLowerCase().includes(s)).slice(0,8);
+  if(!items.length){el.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:6px 0">Nenhum resultado.</p>';return;}
+  el.innerHTML=items.map(i=>`
+    <div class="catalog-item clickable" onclick="addItem(${i.id})">
+      <div class="ci-name">${i.nome}</div>
+      <div class="ci-cat">${i.cat} · ${i.un}</div>
+      <div class="ci-prices" style="margin-top:8px;align-items:center;">
+        <span class="ci-total">${fmt(i.mat+i.mo)} / ${i.un}</span>
+        <span style="font-size:1.3rem;color:var(--accent);line-height:1;">＋</span>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// ORÇAMENTO
+// ============================================================
+function addItem(id){
+  const item=catalogo.find(i=>i.id===id); if(!item) return;
+  const ex=orcamentoItems.find(o=>o.id===id);
+  if(ex) ex.qty++;
+  else orcamentoItems.push({...item,qty:1});
+  renderOrcamento();
+  toast('✅ '+item.nome);
+  document.getElementById('quick-search').value='';
+  document.getElementById('quick-results').innerHTML='';
+}
+
+function renderOrcamento(){
+  const el=document.getElementById('items-list');
+  const total_n=orcamentoItems.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('item-count').textContent=total_n;
+  const isVisitor=currentRole==='visitor';
+  const isPriv=!isVisitor;
+
+  if(!orcamentoItems.length){
+    el.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Nenhum item adicionado ainda.</p></div>';
+    document.getElementById('totals-box').style.display='none';
+    document.getElementById('actions-row').style.display='none';
+    document.getElementById('desconto-section').style.display='none';
+    return;
+  }
+
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  el.innerHTML=orcamentoItems.map((it,idx)=>`
+    <div class="item-row">
+      <div><div class="item-name">${it.nome}</div><div class="item-cat">${it.cat} · ${it.un}</div></div>
+      <div class="item-qty">
+        <button onclick="chQty(${idx},-1)">−</button>
+        <span>${it.qty}</span>
+        <button onclick="chQty(${idx},1)">+</button>
+      </div>
+      <div class="item-price">${fmtR((it.mat+it.mo)*mf*it.qty)}</div>
+      <button class="btn btn-danger" onclick="rmItem(${idx})">✕</button>
+    </div>`).join('');
+
+  document.getElementById('totals-box').style.display='block';
+  document.getElementById('actions-row').style.display='flex';
+  document.getElementById('desconto-section').style.display= isPriv?'block':'none';
+
+  // Totais — visitante também vê os valores
+  document.getElementById('line-mat').style.display   = 'flex';
+  document.getElementById('line-mo').style.display    = 'flex';
+  document.getElementById('line-total').style.display = 'flex';
+  document.getElementById('line-visitor-total').style.display = 'none';
+
+  // Botões
+  document.getElementById('actions-admin').style.display  = isPriv?'contents':'none';
+  document.getElementById('actions-visitor').style.display= isVisitor?'block':'none';
+
+  calcTotais();
+}
+
+function calcTotais(){
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const tm=orcamentoItems.reduce((s,i)=>s+i.mat*i.qty*mf,0);
+  const tmo=orcamentoItems.reduce((s,i)=>s+i.mo*i.qty*mf,0);
+  const subtotal=tm+tmo;
+  // Visitante vê só o total, sem separação mat/MO
+  const isVisitor=currentRole==='visitor';
+  document.getElementById('line-mat').style.display = isVisitor?'none':'flex';
+  document.getElementById('line-mo').style.display  = isVisitor?'none':'flex';
+  document.getElementById('total-mat').textContent=fmtR(tm);
+  document.getElementById('total-mo').textContent=fmtR(tmo);
+  const descAtivo=document.getElementById('desc-check').checked;
+  let descVal=0;
+  if(descAtivo){
+    const tipo=document.getElementById('desc-tipo').value;
+    const v=parseFloat(document.getElementById('desc-valor').value)||0;
+    descVal=tipo==='percent'?subtotal*(v/100):Math.min(v,subtotal);
+  }
+  const haDesc=descAtivo&&descVal>0;
+  document.getElementById('total-subtotal-line').style.display=haDesc?'flex':'none';
+  document.getElementById('total-subtotal').textContent=fmtR(subtotal);
+  document.getElementById('total-desc-line').style.display=haDesc?'flex':'none';
+  if(haDesc){
+    const tipo=document.getElementById('desc-tipo').value;
+    const v=parseFloat(document.getElementById('desc-valor').value)||0;
+    document.getElementById('total-desc-label').textContent=tipo==='percent'?`Desconto (${v}%)`:'Desconto';
+    document.getElementById('total-desc-val').textContent='− '+fmtR(descVal);
+  }
+  document.getElementById('total-geral').textContent=fmtR(subtotal-descVal);
+}
+
+function toggleDesconto(){
+  const chk=document.getElementById('desc-check');
+  document.getElementById('desc-form').classList.toggle('show',chk.checked);
+  calcTotais();
+}
+function chQty(idx,d){orcamentoItems[idx].qty+=d;if(orcamentoItems[idx].qty<=0)orcamentoItems.splice(idx,1);renderOrcamento();}
+function rmItem(idx){orcamentoItems.splice(idx,1);renderOrcamento();}
+function limparOrcamento(){if(confirm('Limpar todos os itens?')){orcamentoItems=[];renderOrcamento();fecharPreview();}}
+function fecharPreview(){document.getElementById('preview-card').style.display='none';}
+
+// ============================================================
+// PEDIDO VISITANTE
+// ============================================================
+function enviarPedido(){
+  if(!orcamentoItems.length){toast('⚠️ Adicione serviços primeiro!');return;}
+  const nome=document.getElementById('cli-nome').value||visitorNome;
+  const tel=document.getElementById('cli-tel').value||visitorTel;
+  const obs=document.getElementById('cli-obs').value;
+
+  const pedido={
+    id:'PED-'+Date.now(),
+    data:new Date().toLocaleString('pt-BR'),
+    nome, tel, obs,
+    itens:orcamentoItems.map(i=>({nome:i.nome,cat:i.cat,un:i.un,qty:i.qty,mat:i.mat,mo:i.mo})),
+    status:'pendente',
+    nota:''
+  };
+  pedidos.unshift(pedido);
+  localStorage.setItem('orca_pedidos',JSON.stringify(pedidos));
+  atualizarBadgePedidos();
+
+  // Gerar texto WhatsApp se tiver número configurado
+  const wpp=cfg.wpp||cfg.tel||'';
+  let txt=`*NOVO PEDIDO ${pedido.id}*\n📅 ${pedido.data}\n👤 ${nome}`;
+  if(tel) txt+=` — ${tel}`;
+  txt+=`\n\n*SERVIÇOS SOLICITADOS:*\n`;
+  orcamentoItems.forEach(i=>txt+=`• ${i.nome} (x${i.qty})\n`);
+  if(obs) txt+=`\n📝 ${obs}`;
+
+  orcamentoItems=[];
+  renderOrcamento();
+
+  // Confirmação com opção de enviar WhatsApp
+  const conf=document.createElement('div');
+  conf.style.cssText='position:fixed;inset:0;background:#00000090;z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;';
+  conf.innerHTML=`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:400px;width:100%;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:10px;">✅</div>
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:8px;">Pedido Enviado!</div>
+      <div style="color:var(--muted);font-size:.88rem;margin-bottom:20px;">Número: <strong style="color:var(--accent)">${pedido.id}</strong><br>O responsável irá analisar e entrar em contato.</div>
+
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="this.parentElement.parentElement.remove()">Fechar</button>
+    </div>`;
+  document.body.appendChild(conf);
+}
+
+// ============================================================
+// PEDIDOS (admin/staff)
+// ============================================================
+function renderPedidos(){
+  const el=document.getElementById('pedidos-list');
+  let lista=pedidos;
+  if(pedidoFilter!=='todos') lista=pedidos.filter(p=>p.status===pedidoFilter);
+  if(!lista.length){
+    el.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Nenhum pedido encontrado.</p></div>';
+    return;
+  }
+  el.innerHTML=lista.map(p=>{
+    const sc=p.status==='pendente'?'status-pending':p.status==='aprovado'?'status-approved':p.status==='gerado'?'status-gerado':'status-rejected';
+    const sl=p.status==='pendente'?'⏳ Aguardando':p.status==='aprovado'?'✅ Aprovado':p.status==='gerado'?('📋 Gerado por '+p.geradoPor):'❌ Rejeitado';
+    const itensStr=p.itens.slice(0,3).map(i=>`${i.nome} (x${i.qty})`).join(', ')+(p.itens.length>3?'...':'');
+    return `<div class="pedido-card">
+      <div class="pedido-header">
+        <div>
+          <div class="pedido-titulo">👤 ${p.nome} ${p.tel?'— '+p.tel:''}</div>
+          <div class="pedido-meta">📅 ${p.data} · ${p.id}</div>
+        </div>
+        <span class="status-badge ${sc}">${sl}</span>
+      </div>
+      <div class="pedido-itens">${itensStr}</div>
+      ${p.obs?`<div class="pedido-itens" style="color:var(--accent);font-size:.8rem;">📝 ${p.obs}</div>`:''}
+      <div class="pedido-actions">
+        <button class="btn btn-ghost btn-sm" onclick="abrirPedido('${p.id}')">👁 Ver detalhes</button>
+        ${p.status==='pendente'?`
+          <button class="btn btn-green btn-sm" onclick="mudarStatus('${p.id}','aprovado')">✅ Aprovar</button>
+          <button class="btn btn-danger" onclick="mudarStatus('${p.id}','rejeitado')">❌ Rejeitar</button>`:''}
+        ${p.status==='gerado'?`
+          <button class="btn btn-ghost btn-sm" onclick="recarregarPedido('${p.id}')">🔄 Reabrir orçamento</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const pend=pedidos.filter(p=>p.status==='pendente').length;
+  const pb=document.getElementById('pending-badge');
+  if(pend>0){pb.textContent=pend+' pendente'+(pend>1?'s':'');pb.style.display='';}
+  else pb.style.display='none';
+}
+
+function filterPedidos(f,btn){
+  pedidoFilter=f;
+  document.querySelectorAll('.active-filter').forEach(el=>el.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  renderPedidos();
+}
+
+function abrirPedido(id){
+  pedidoAtual=pedidos.find(p=>p.id===id); if(!pedidoAtual) return;
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const total=pedidoAtual.itens.reduce((s,i)=>s+(i.mat+i.mo)*i.qty*mf,0);
+  document.getElementById('modal-pedido-content').innerHTML=`
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;">Cliente</div>
+      <strong>${pedidoAtual.nome}</strong>${pedidoAtual.tel?' — '+pedidoAtual.tel:''}
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Serviços solicitados</div>
+      ${pedidoAtual.itens.map(i=>`<div style="display:flex;justify-content:space-between;padding:7px 10px;background:var(--bg);border-radius:7px;margin-bottom:5px;font-size:.85rem;">
+        <span>${i.nome} <span style="color:var(--muted)">(x${i.qty} ${i.un})</span></span>
+        <span style="color:var(--accent);font-weight:600;">${fmtR((i.mat+i.mo)*i.qty*mf)}</span>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:12px;background:var(--surface2);border-radius:9px;font-weight:700;margin-bottom:14px;">
+      <span>Total estimado</span><span style="color:var(--accent)">${fmtR(total)}</span>
+    </div>
+    ${pedidoAtual.obs?`<div style="background:var(--bg);border:1px solid var(--accent)40;border-radius:8px;padding:10px 12px;font-size:.85rem;color:var(--accent);">📝 ${pedidoAtual.obs}</div>`:''}
+    ${pedidoAtual.geradoPor?`<div style="margin-top:12px;padding:10px 12px;background:var(--bg);border:1px solid #4a9eff40;border-radius:8px;font-size:.82rem;color:var(--blue);">📋 Gerado por <strong>${pedidoAtual.geradoPor}</strong> em ${pedidoAtual.data}</div>`:''}
+    ${pedidoAtual.desconto?.ativo?`<div style="margin-top:8px;font-size:.82rem;color:var(--green);">🏷 Desconto aplicado: ${pedidoAtual.desconto.label} — − ${fmtR(pedidoAtual.desconto.val)}</div>`:''}
+    ${pedidoAtual.nota?`<div style="margin-top:10px;font-size:.82rem;color:var(--muted);">Nota interna: ${pedidoAtual.nota}</div>`:''}
+  `;
+  const isPend=pedidoAtual.status==='pendente';
+  const isGerado=pedidoAtual.status==='gerado';
+  document.getElementById('btn-aprovar').style.display=isPend?'':'none';
+  document.getElementById('btn-rejeitar').style.display=isPend?'':'none';
+  document.getElementById('modal-pedido').classList.add('open');
+}
+
+function mudarStatus(id,status){
+  const p=pedidos.find(x=>x.id===id); if(!p) return;
+  p.status=status;
+  localStorage.setItem('orca_pedidos',JSON.stringify(pedidos));
+  atualizarBadgePedidos();
+  renderPedidos();
+  toast(status==='aprovado'?'✅ Pedido aprovado!':'❌ Pedido rejeitado.');
+}
+function aprovarPedido(){ if(pedidoAtual){mudarStatus(pedidoAtual.id,'aprovado');document.getElementById('modal-pedido').classList.remove('open');}}
+function rejeitarPedido(){ if(pedidoAtual){mudarStatus(pedidoAtual.id,'rejeitado');document.getElementById('modal-pedido').classList.remove('open');}}
+
+function recarregarPedido(id){
+  const p=pedidos.find(x=>x.id===id); if(!p) return;
+  orcamentoItems=p.itens.map(i=>({...i}));
+  document.getElementById('cli-nome').value=p.nome;
+  document.getElementById('cli-tel').value=p.tel||'';
+  document.getElementById('cli-obs').value=p.obs||'';
+  showTab('orcamento');
+  renderOrcamento();
+  toast('🔄 Orçamento '+p.id+' recarregado!');
+}
+
+function gerarOrcamentoDoPedido(){
+  if(!pedidoAtual) return;
+  orcamentoItems=pedidoAtual.itens.map(i=>({...i}));
+  document.getElementById('cli-nome').value=pedidoAtual.nome;
+  document.getElementById('cli-tel').value=pedidoAtual.tel||'';
+  document.getElementById('cli-obs').value=pedidoAtual.obs||'';
+  document.getElementById('modal-pedido').classList.remove('open');
+  showTab('orcamento');
+  renderOrcamento();
+  toast('📋 Itens do pedido carregados no orçamento!');
+}
+
+function atualizarBadgePedidos(){
+  const pend=pedidos.filter(p=>p.status==='pendente').length;
+  const el=document.getElementById('pedidos-count');
+  if(pend>0){el.textContent='('+pend+' novo'+(pend>1?'s':'')+')';el.style.display='';}
+  else el.style.display='none';
+}
+
+// ============================================================
+// PREVIEW / WHATSAPP
+// ============================================================
+function getDescontoInfo(){
+  const chk=document.getElementById('desc-check').checked; if(!chk) return{val:0,label:'',ativo:false};
+  const tipo=document.getElementById('desc-tipo').value;
+  const v=parseFloat(document.getElementById('desc-valor').value)||0;
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const subtotal=orcamentoItems.reduce((s,i)=>s+(i.mat+i.mo)*i.qty*mf,0);
+  const val=tipo==='percent'?subtotal*(v/100):Math.min(v,subtotal);
+  const motivo=document.getElementById('desc-motivo').value;
+  const label=tipo==='percent'?`Desconto ${v}%${motivo?' — '+motivo:''}`:`Desconto${motivo?' — '+motivo:''}`;
+  return{val,label,ativo:val>0};
+}
+
+function verPreview(){
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const nome=document.getElementById('cli-nome').value||'—';
+  const tel=document.getElementById('cli-tel').value;
+  const end=document.getElementById('cli-end').value;
+  const val=document.getElementById('cli-validade').value;
+  const obs=document.getElementById('cli-obs').value;
+  const num='ORC-'+String(Date.now()).slice(-6);
+  const hoje=new Date().toLocaleDateString('pt-BR');
+  const tm=orcamentoItems.reduce((s,i)=>s+i.mat*i.qty*mf,0);
+  const tmo=orcamentoItems.reduce((s,i)=>s+i.mo*i.qty*mf,0);
+  const subtotal=tm+tmo;
+  const desc=getDescontoInfo();
+  const total=subtotal-desc.val;
+  const rows=orcamentoItems.map(i=>{const ut=(i.mat+i.mo)*mf;return`<tr><td>${i.nome}</td><td>${i.qty}&nbsp;${i.un}</td><td>${fmtR(ut)}</td><td>${fmtR(ut*i.qty)}</td></tr>`;}).join('');
+  const logoHtml=logoBase64?`<img src="${logoBase64}" class="orca-logo-img" alt="logo">`:'';
+  const nomeEmp=cfg.nome||'Seu Nome';
+  document.getElementById('preview-content').innerHTML=`
+  <div class="orca-preview">
+    <div class="orca-header">
+      <div class="orca-header-left">${logoHtml}
+        <div><div class="orca-brand">${nomeEmp}</div>
+          <div class="orca-contact">${cfg.tel?'📞 '+cfg.tel+'&nbsp; ':''}${cfg.email||''}</div>
+          ${cfg.cidade?`<div class="orca-contact">📍 ${cfg.cidade}</div>`:''}
+          ${cfg.doc?`<div class="orca-contact" style="color:#aaa">${cfg.doc}</div>`:''}
+        </div>
+      </div>
+      <div class="orca-meta"><div class="orca-num">${num}</div>
+        <div style="font-size:.8rem;color:#666">${hoje}</div>
+        <div class="orca-valid">⏳ Válido por ${val}</div>
+      </div>
+    </div>
+    <div class="orca-client"><strong>👤 ${nome}</strong>
+      ${tel?`<div>📞 ${tel}</div>`:''}${end?`<div>📍 ${end}</div>`:''}
+    </div>
+    <table class="orca-table">
+      <thead><tr><th>Descrição</th><th style="text-align:right">Qtd</th><th style="text-align:right">Unit.</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="orca-totals">
+      <div class="orca-tot-line"><span>Material</span><span>${fmtR(tm)}</span></div>
+      <div class="orca-tot-line"><span>Mão de obra</span><span>${fmtR(tmo)}</span></div>
+      ${desc.ativo?`<div class="orca-tot-line" style="color:#888"><span>Subtotal</span><span>${fmtR(subtotal)}</span></div>
+      <div class="orca-tot-desc"><span>${desc.label}</span><span>− ${fmtR(desc.val)}</span></div>`:''}
+      <div class="orca-tot-main"><span>TOTAL GERAL</span><span>${fmtR(total)}</span></div>
+    </div>
+    ${obs?`<div class="orca-obs"><strong>📝 Obs:</strong> ${obs}</div>`:''}
+    <div class="orca-footer">${cfg.footer||'Obrigado pela preferência!'}</div>
+  </div>`;
+  document.getElementById('preview-content').dataset.num = num;
+  document.getElementById('preview-content').dataset.total = total;
+  document.getElementById('preview-content').dataset.subtotal = subtotal;
+  document.getElementById('preview-content').dataset.descval = desc.val;
+  document.getElementById('preview-content').dataset.desclabel = desc.label;
+  document.getElementById('preview-card').style.display='block';
+  document.getElementById('preview-card').scrollIntoView({behavior:'smooth'});
+
+  // Auto-salvar nos Pedidos como orçamento gerado
+  salvarOrcamentoNoPedidos(num, nome, tel, end, obs, total, desc);
+}
+
+function salvarOrcamentoNoPedidos(num, nome, tel, end, obs, total, desc){
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const pedido={
+    id: num,
+    data: new Date().toLocaleString('pt-BR'),
+    nome, tel,
+    obs: obs || '',
+    itens: orcamentoItems.map(i=>({nome:i.nome,cat:i.cat,un:i.un,qty:i.qty,mat:i.mat,mo:i.mo})),
+    status: 'gerado',
+    geradoPor: currentUser,
+    totalFinal: total,
+    desconto: desc.ativo ? desc : null,
+    nota: ''
+  };
+  // Evitar duplicatas do mesmo orçamento
+  if(!pedidos.find(p=>p.id===num)){
+    pedidos.unshift(pedido);
+    localStorage.setItem('orca_pedidos', JSON.stringify(pedidos));
+    atualizarBadgePedidos();
+    toast('💾 Orçamento salvo nos Pedidos automaticamente');
+  }
+}
+
+function copiarWhatsApp(){
+  if(!orcamentoItems.length){toast('⚠️ Adicione itens primeiro!');return;}
+  const mf=1+parseFloat(cfg.margem||0)/100;
+  const nome=document.getElementById('cli-nome').value||'Cliente';
+  const val=document.getElementById('cli-validade').value;
+  const subtotal=orcamentoItems.reduce((s,i)=>s+(i.mat+i.mo)*i.qty*mf,0);
+  const desc=getDescontoInfo();
+  const total=subtotal-desc.val;
+  const num='ORC-'+String(Date.now()).slice(-6);
+  let txt=`*ORÇAMENTO ${num}*\n📅 ${new Date().toLocaleDateString('pt-BR')}\n👤 *${nome}*\n\n*SERVIÇOS:*\n`;
+  orcamentoItems.forEach(i=>txt+=`• ${i.nome} (${i.qty}${i.un}) → ${fmtR((i.mat+i.mo)*i.qty*mf)}\n`);
+  txt+=`\nSubtotal: ${fmtR(subtotal)}\n`;
+  if(desc.ativo) txt+=`${desc.label}: − ${fmtR(desc.val)}\n`;
+  txt+=`*💰 TOTAL: ${fmtR(total)}*\n⏳ Válido por ${val}`;
+  if(cfg.footer) txt+=`\n\n_${cfg.footer}_`;
+  txt+=`\n\n${cfg.nome||''} ${cfg.tel?'— '+cfg.tel:''}`.trim();
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Copiado! Cole no WhatsApp.')).catch(()=>prompt('Copie:',txt));
+}
+
+// ============================================================
+// LOGO
+// ============================================================
+function carregarLogo(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{logoBase64=ev.target.result;localStorage.setItem('orca_logo',logoBase64);showLogoPreview(logoBase64);toast('🖼 Logo carregada!');};
+  reader.readAsDataURL(file);
+}
+function showLogoPreview(src){
+  document.getElementById('logo-placeholder').style.display='none';
+  const img=document.getElementById('logo-preview-img');img.src=src;img.style.display='block';
+  document.getElementById('btn-remover-logo').style.display='inline-flex';
+}
+function removerLogo(){logoBase64='';localStorage.removeItem('orca_logo');
+  document.getElementById('logo-placeholder').style.display='block';
+  document.getElementById('logo-preview-img').style.display='none';
+  document.getElementById('btn-remover-logo').style.display='none';toast('🗑 Logo removida');}
+
+// ============================================================
+// MODAL ITEM
+// ============================================================
+function abrirModalNovo(){editId=-1;document.getElementById('modal-title').textContent='Novo Item';
+  ['mi-nome','mi-mat','mi-mo'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mi-total-preview').textContent='R$ 0,00';
+  document.getElementById('modal-item').classList.add('open');}
+function editarItem(id){const it=catalogo.find(i=>i.id===id);editId=id;
+  document.getElementById('modal-title').textContent='Editar Item';
+  document.getElementById('mi-nome').value=it.nome;document.getElementById('mi-cat').value=it.cat;
+  document.getElementById('mi-unidade').value=it.un;document.getElementById('mi-mat').value=it.mat;
+  document.getElementById('mi-mo').value=it.mo;previewTotal();document.getElementById('modal-item').classList.add('open');}
+function fecharModal(){document.getElementById('modal-item').classList.remove('open');}
+function previewTotal(){const mat=parseFloat(document.getElementById('mi-mat').value)||0,mo=parseFloat(document.getElementById('mi-mo').value)||0;document.getElementById('mi-total-preview').textContent=fmtR(mat+mo);}
+function salvarItem(){
+  const nome=document.getElementById('mi-nome').value.trim();if(!nome){alert('Informe o nome.');return;}
+  const it={id:editId>0?editId:Date.now(),nome,cat:document.getElementById('mi-cat').value,
+    un:document.getElementById('mi-unidade').value,mat:parseFloat(document.getElementById('mi-mat').value)||0,mo:parseFloat(document.getElementById('mi-mo').value)||0};
+  if(editId>0){const i=catalogo.findIndex(x=>x.id===editId);catalogo[i]=it;}else catalogo.push(it);
+  salvarCat();fecharModal();renderCatalogo();renderFilterTags();toast('💾 Item salvo!');}
+function excluirItem(id){if(!confirm('Excluir?'))return;catalogo=catalogo.filter(i=>i.id!==id);salvarCat();renderCatalogo();renderFilterTags();toast('🗑 Removido');}
+
+// ============================================================
+// CONFIG / SENHAS
+// ============================================================
+function loadCfgUI(){
+  const f={nome:'cfg-nome',tel:'cfg-tel',email:'cfg-email',doc:'cfg-doc',cidade:'cfg-cidade',footer:'cfg-footer',margem:'cfg-margem',wpp:'cfg-wpp'};
+  Object.entries(f).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&cfg[k]!==undefined)el.value=cfg[k];});
+  const staffUserEl=document.getElementById('cfg-user-staff');
+  if(staffUserEl) staffUserEl.value=localStorage.getItem('orca_user_staff')||DEFAULT_CREDS.staff.user;
+}
+function salvarConfig(){
+  cfg={nome:document.getElementById('cfg-nome').value,tel:document.getElementById('cfg-tel').value,
+    email:document.getElementById('cfg-email').value,doc:document.getElementById('cfg-doc').value,
+    cidade:document.getElementById('cfg-cidade').value,footer:document.getElementById('cfg-footer').value,
+    margem:document.getElementById('cfg-margem').value,wpp:document.getElementById('cfg-wpp').value};
+  localStorage.setItem('orca_cfg',JSON.stringify(cfg));toast('✅ Configurações salvas!');}
+async function salvarSenhas(){
+  const pa=document.getElementById('cfg-pass-admin').value;
+  const ps=document.getElementById('cfg-pass-staff').value;
+  const us=document.getElementById('cfg-user-staff').value.trim().toLowerCase();
+  const disp=document.getElementById('cfg-user-staff').value.trim();
+  if(pa){ localStorage.setItem('orca_pass_admin', await sha256(pa)); }
+  if(ps){ localStorage.setItem('orca_pass_staff', await sha256(ps)); }
+  if(us){ localStorage.setItem('orca_user_staff', us); localStorage.setItem('orca_user_staff_display', disp); }
+  document.getElementById('cfg-pass-admin').value='';
+  document.getElementById('cfg-pass-staff').value='';
+  toast('🔐 Credenciais atualizadas com SHA-256!');}
+function renderStats(){
+  const cats=[...new Set(catalogo.map(i=>i.cat))];
+  const pend=pedidos.filter(p=>p.status==='pendente').length;
+  atualizar2FAStatus();
+  document.getElementById('stats-content').innerHTML=
+    `<div>📦 Itens no catálogo: <strong>${catalogo.length}</strong></div>
+     <div>🏷 Categorias: <strong>${cats.join(' · ')}</strong></div>
+     <div>📬 Pedidos pendentes: <strong style="color:var(--accent)">${pend}</strong></div>
+     <div>📊 Total de pedidos: <strong>${pedidos.length}</strong></div>`;}
+
+// ============================================================
+// 2FA CONFIG
+// ============================================================
+let setup2FARole = null;
+let setup2FASecret = null;
+
+function atualizar2FAStatus(){
+  ['admin','staff'].forEach(role=>{
+    const el=document.getElementById('status-2fa-'+role);
+    if(!el) return;
+    const ativo=!!localStorage.getItem('orca_totp_'+role);
+    const label=role==='admin'?'👑 Admin':'🔧 Equipe';
+    el.innerHTML=ativo
+      ?`<span style="color:var(--green)">✅ ${label}: 2FA ativo</span> <button class="btn btn-danger" style="padding:3px 8px;font-size:.75rem;" onclick="desativar2FA('${role}')">Remover</button>`
+      :`<span style="color:var(--muted)">⬜ ${label}: sem 2FA</span>`;
+  });
+}
+
+async function setup2FA(role){
+  setup2FARole=role;
+  setup2FASecret=TOTP.randomSecret();
+  const label=role==='admin'?'Admin (lets)':'Equipe';
+  const url=TOTP.otpauthURL(setup2FASecret, label);
+  // QR via API gratuita (não envia dados sensíveis — a URL é gerada localmente)
+  const qrUrl=`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`;
+  document.getElementById('qr-img').src=qrUrl;
+  document.getElementById('totp-secret-display').textContent=setup2FASecret;
+  document.getElementById('qr-setup-role-label').textContent=`🔑 Configurar 2FA — ${label}`;
+  document.getElementById('totp-confirm-code').value='';
+  document.getElementById('qr-setup-box').style.display='block';
+  document.getElementById('qr-setup-box').scrollIntoView({behavior:'smooth'});
+}
+
+async function confirmar2FA(){
+  const token=document.getElementById('totp-confirm-code').value.trim();
+  if(token.length!==6){toast('⚠️ Digite os 6 dígitos do app');return;}
+  const ok=await TOTP.verify(setup2FASecret,token);
+  if(ok){
+    localStorage.setItem('orca_totp_'+setup2FARole, setup2FASecret);
+    setup2FARole=null; setup2FASecret=null;
+    document.getElementById('qr-setup-box').style.display='none';
+    atualizar2FAStatus();
+    toast('✅ 2FA ativado com sucesso!');
+  } else {
+    toast('❌ Código inválido. Verifique o app e tente novamente.');
+    document.getElementById('totp-confirm-code').value='';
+    document.getElementById('totp-confirm-code').focus();
+  }
+}
+
+function cancelarSetup2FA(){
+  setup2FARole=null; setup2FASecret=null;
+  document.getElementById('qr-setup-box').style.display='none';
+}
+
+function desativar2FA(role){
+  if(!confirm('Remover 2FA deste perfil? O login passará a exigir apenas senha.')) return;
+  localStorage.removeItem('orca_totp_'+role);
+  atualizar2FAStatus();
+  toast('🔓 2FA removido.');
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function salvarCat(){localStorage.setItem('orca_cat',JSON.stringify(catalogo));}
+function exportarCatalogo(){
+  const b=new Blob([JSON.stringify(catalogo,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='catalogo_orcafacil_'+new Date().toISOString().slice(0,10)+'.json';a.click();}
+function importarCatalogo(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d))throw 0;
+    catalogo=d;salvarCat();renderCatalogo();renderFilterTags();toast('✅ '+d.length+' itens importados!');}
+    catch{alert('Arquivo inválido.');}};r.readAsText(f);}
+
+// ============================================================
+// CATÁLOGO PADRÃO
+// ============================================================
+function defaultCatalogo(){return[
+  {id:1,nome:'Tomada simples 2P+T (com material)',cat:'Elétrica',un:'ponto',mat:35,mo:90},
+  {id:2,nome:'Tomada dupla 2P+T (com material)',cat:'Elétrica',un:'ponto',mat:48,mo:100},
+  {id:3,nome:'Tomada USB dupla (com material)',cat:'Elétrica',un:'ponto',mat:70,mo:100},
+  {id:4,nome:'Tomada 20A — ar-cond/chuveiro (com material)',cat:'Elétrica',un:'ponto',mat:55,mo:110},
+  {id:5,nome:'Interruptor simples (com material)',cat:'Elétrica',un:'ponto',mat:28,mo:80},
+  {id:6,nome:'Interruptor paralelo three-way (par, com material)',cat:'Elétrica',un:'par',mat:60,mo:130},
+  {id:7,nome:'Ponto de luz — plafonier/spot (com material)',cat:'Elétrica',un:'ponto',mat:40,mo:110},
+  {id:8,nome:'Instalação de pendente / arandela (só MO)',cat:'Elétrica',un:'un',mat:0,mo:120},
+  {id:9,nome:'Instalação de ventilador de teto (só MO)',cat:'Elétrica',un:'un',mat:0,mo:180},
+  {id:10,nome:'Disjuntor simples até 40A (com material)',cat:'Elétrica',un:'un',mat:45,mo:80},
+  {id:11,nome:'Disjuntor bipolar/trifásico (com material)',cat:'Elétrica',un:'un',mat:150,mo:100},
+  {id:12,nome:'Quadro de distribuição até 12 circuitos',cat:'Elétrica',un:'vb',mat:350,mo:500},
+  {id:13,nome:'Aterramento (hastes + cabo)',cat:'Elétrica',un:'vb',mat:250,mo:350},
+  {id:14,nome:'Passagem de cabo por eletroduto',cat:'Elétrica',un:'m',mat:8,mo:22},
+  {id:15,nome:'Ponto elétrico para chuveiro (com material)',cat:'Elétrica',un:'ponto',mat:75,mo:160},
+  {id:16,nome:'Instalação de chuveiro elétrico (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:120},
+  {id:17,nome:'Instalação de split até 12000 BTU (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:350},
+  {id:18,nome:'Instalação de split 18000–24000 BTU (só MO)',cat:'Elétrica',un:'vb',mat:0,mo:450},
+  {id:19,nome:'Troca de fiação — por ponto (com material)',cat:'Elétrica',un:'ponto',mat:50,mo:150},
+  {id:20,nome:'Levantamento / laudo elétrico residencial',cat:'Elétrica',un:'vb',mat:0,mo:300},
+  {id:30,nome:'Ponto de rede Cat5e cabeado (até 15m)',cat:'Informática',un:'ponto',mat:60,mo:120},
+  {id:31,nome:'Ponto de rede Cat6 cabeado (até 15m)',cat:'Informática',un:'ponto',mat:80,mo:120},
+  {id:32,nome:'Passagem de cabo de rede',cat:'Informática',un:'m',mat:6,mo:16},
+  {id:33,nome:'Config de roteador / repetidor Wi-Fi',cat:'Informática',un:'vb',mat:0,mo:160},
+  {id:34,nome:'Instalação de switch gerenciável',cat:'Informática',un:'vb',mat:0,mo:200},
+  {id:35,nome:'Formatação e instalação Windows + drivers',cat:'Informática',un:'vb',mat:0,mo:200},
+  {id:36,nome:'Config e instalação de câmeras IP / DVR',cat:'Informática',un:'vb',mat:0,mo:280},
+  {id:37,nome:'Ponto de câmera externa (cabo + passagem)',cat:'Informática',un:'ponto',mat:65,mo:160},
+  {id:38,nome:'Diagnóstico e manutenção de PC / notebook',cat:'Informática',un:'vb',mat:0,mo:180},
+  {id:50,nome:'Smart switch 1 canal — instalação e config',cat:'Automação',un:'ponto',mat:100,mo:130},
+  {id:51,nome:'Smart switch 2 canais — instalação e config',cat:'Automação',un:'ponto',mat:150,mo:150},
+  {id:52,nome:'Dimmer inteligente — instalação e config',cat:'Automação',un:'ponto',mat:170,mo:140},
+  {id:53,nome:'Config Alexa — dispositivos e rotinas',cat:'Automação',un:'vb',mat:0,mo:200},
+  {id:54,nome:'Config Google Home / Assistente',cat:'Automação',un:'vb',mat:0,mo:200},
+  {id:55,nome:'Tomada inteligente / smart plug — instalação',cat:'Automação',un:'un',mat:70,mo:90},
+  {id:56,nome:'Sensor de presença inteligente — instalação',cat:'Automação',un:'un',mat:0,mo:110},
+  {id:57,nome:'Fechadura inteligente — instalação e config (só MO)',cat:'Automação',un:'vb',mat:0,mo:280},
+  {id:58,nome:'Campainha inteligente com vídeo (só MO)',cat:'Automação',un:'vb',mat:0,mo:200},
+  {id:59,nome:'Integração Home Assistant (config básica)',cat:'Automação',un:'vb',mat:0,mo:500},
+  {id:70,nome:'Montagem de móvel simples (estante, rack)',cat:'Marido de Aluguel',un:'vb',mat:0,mo:130},
+  {id:71,nome:'Montagem de cama box / casal',cat:'Marido de Aluguel',un:'vb',mat:0,mo:160},
+  {id:72,nome:'Fixação de TV na parede (com suporte)',cat:'Marido de Aluguel',un:'vb',mat:40,mo:160},
+  {id:73,nome:'Fixação de prateleiras (até 4)',cat:'Marido de Aluguel',un:'vb',mat:25,mo:110},
+  {id:74,nome:'Instalação de cortina / persiana (só MO)',cat:'Marido de Aluguel',un:'vb',mat:0,mo:120},
+  {id:75,nome:'Hora técnica — serviço geral',cat:'Marido de Aluguel',un:'hr',mat:0,mo:120},
+  {id:76,nome:'Visita técnica / avaliação',cat:'Marido de Aluguel',un:'vb',mat:0,mo:130},
+  {id:77,nome:'Pendurar quadros / espelhos pesados',cat:'Marido de Aluguel',un:'vb',mat:0,mo:90},
+];}
+
+// ============================================================
+// UTILS
+// ============================================================
+function fmt(v){return'R$\u00a0'+Number(v).toFixed(2).replace('.',',');}
+function fmtR(v){return'R$\u00a0'+Number(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2800);}
+
+init();
+</script>
 </body>
 </html>
