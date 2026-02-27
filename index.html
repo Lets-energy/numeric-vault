@@ -311,6 +311,11 @@ async function sha256(str) {
       </div>
       <button class="login-btn" onclick="doLogin()">Entrar →</button>
       <div class="login-err" id="login-err"></div>
+      <div style="text-align:center;margin-top:16px;">
+        <button onclick="redefinirAcesso()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.75rem;text-decoration:underline;opacity:.6;">
+          Esqueci / Redefinir acesso
+        </button>
+      </div>
     </div>
 
     <!-- ETAPA 2: 2FA -->
@@ -680,12 +685,16 @@ async function init(){
   logoBase64= localStorage.getItem('orca_logo')||'';
   pedidos   = JSON.parse(localStorage.getItem('orca_pedidos')||'[]');
 
-  // Inicializar hashes padrão se nunca foram definidos
-  if(!localStorage.getItem('orca_pass_admin')){
+  // Resetar credenciais padrão se a versão mudou (garante consistência após atualizações)
+  const CRED_VERSION = 'v3-leticia-alex';
+  if(localStorage.getItem('orca_cred_version') !== CRED_VERSION){
     localStorage.setItem('orca_pass_admin', await sha256('Leticia'));
-  }
-  if(!localStorage.getItem('orca_pass_staff')){
     localStorage.setItem('orca_pass_staff', await sha256('alex123'));
+    localStorage.removeItem('orca_user_admin');
+    localStorage.removeItem('orca_user_staff');
+    localStorage.removeItem('orca_user_admin_display');
+    localStorage.removeItem('orca_user_staff_display');
+    localStorage.setItem('orca_cred_version', CRED_VERSION);
   }
 }
 
@@ -771,6 +780,25 @@ async function verificar2FA(){
     document.getElementById('l-totp').value='';
     document.getElementById('l-totp').focus();
   }
+}
+
+async function redefinirAcesso(){
+  if(!confirm('Isso vai redefinir usuário e senha para os valores padrão:\n\nAdmin: leticia / Leticia\nEquipe: alex / alex123\n\nContinuar?')) return;
+  localStorage.setItem('orca_pass_admin', await sha256('Leticia'));
+  localStorage.setItem('orca_pass_staff', await sha256('alex123'));
+  localStorage.removeItem('orca_user_admin');
+  localStorage.removeItem('orca_user_staff');
+  localStorage.removeItem('orca_user_admin_display');
+  localStorage.removeItem('orca_user_staff_display');
+  localStorage.removeItem('orca_totp_admin');
+  localStorage.removeItem('orca_totp_staff');
+  localStorage.setItem('orca_cred_version', 'v3-leticia-alex');
+  const err=document.getElementById('login-err');
+  err.textContent='✅ Credenciais redefinidas! Use leticia / Leticia ou alex / alex123';
+  err.style.display='block';
+  err.style.color='var(--green)';
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
 }
 
 function voltarLogin(){
